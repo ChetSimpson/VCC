@@ -252,6 +252,9 @@
       <Project>{f4dc9499-4ff1-4a56-83dd-6499062972aa}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="GMC\gmc.vcxproj">
+      <Project>{bd7ca587-71d0-43d6-a730-582126b1c1f4}</Project>
+    </ProjectReference>
     <ProjectReference Include="harddisk\harddisk.vcxproj">
       <Project>{fc5d90df-a488-4e57-a4b2-7c74ae861f9e}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
