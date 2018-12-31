@@ -141,10 +141,10 @@
 
 SN76489Device::SN76489Device()
 	: m_feedback_mask(0x4000)
-	, m_period_divider(7)	//	TODO: Update this to work properly
+	, m_period_divider(6.11f)
 	, m_whitenoise_tap1(0x01)
 	, m_whitenoise_tap2(0x02)
-	, m_negate(true)
+	, m_negate(false)	//	Was true!
 	, m_stereo(false)
 	, m_ncr_style_psg(false)
 	, m_sega_style_psg(true)
@@ -199,7 +199,6 @@ void SN76489Device::device_start()
 	m_ready_state = true;
 }
 
-//	3579545
 
 void SN76489Device::write(uint8_t data)
 {
@@ -315,7 +314,7 @@ SN76489Device::stream_sample_t SN76489Device::sound_stream_update(stream_sample_
 		if (m_count[i] <= 0)
 		{
 			m_output[i] ^= 1;
-			m_count[i] = m_period[i] / m_period_divider;
+			m_count[i] = static_cast<int32_t>(static_cast<float>(m_period[i]) / m_period_divider);
 		}
 	}
 
@@ -337,7 +336,7 @@ SN76489Device::stream_sample_t SN76489Device::sound_stream_update(stream_sample_
 		}
 		m_output[3] = m_RNG & 1;
 
-		m_count[3] = m_period[3] / m_period_divider;
+		m_count[3] = static_cast<int32_t>(static_cast<float>(m_period[3]) / m_period_divider);
 	}
 
 	int16_t out;
@@ -370,10 +369,7 @@ SN76489Device::stream_sample_t SN76489Device::sound_stream_update(stream_sample_
 	}
 
 	lbuffer = out;
-	if (m_stereo)
-	{
-		rbuffer = out2;
-	}
+	rbuffer = out2;
 
 	return lbuffer + rbuffer;
 }

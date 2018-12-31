@@ -32,7 +32,7 @@ private:
 	const int32_t	m_whitenoise_tap2;  // mask for white noise tap 2 (lower one, usually bit 13)
 	const bool		m_negate;           // output negate flag
 	const bool		m_stereo;           // whether we're dealing with stereo or not
-	const int32_t	m_period_divider;   // period divider
+	const float		m_period_divider;   // period divider
 	const bool		m_ncr_style_psg;    // flag to ignore writes to regs 1,3,5,6,7 with bit 7 low
 	const bool		m_sega_style_psg;   // flag to make frequency zero acts as if it is one more than max (0x3ff+1) or if it acts like 0; the initial register is pointing to 0x3 instead of 0x0; the volume reg is preloaded with 0xF instead of 0x0
 
