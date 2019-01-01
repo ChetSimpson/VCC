@@ -13,6 +13,18 @@
     <ClInclude Include="sn76496.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cartridge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CartridgeTrampolines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMCCartridge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GMC.rc" />
@@ -26,9 +38,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GMC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ROM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,6 +45,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sn76496.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CartridgeTrampolines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cartridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMCCartridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

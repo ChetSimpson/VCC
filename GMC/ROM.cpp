@@ -2,7 +2,7 @@
 #include <fstream>
 
 
-bool ROM::Load(const std::string& filename)
+bool ROM::Load(std::string filename)
 {
     std::ifstream input(filename, std::ifstream::binary);
     if (!input.is_open())
@@ -22,6 +22,7 @@ bool ROM::Load(const std::string& filename)
 		return false;
     }
 
+	m_Filename = move(filename);
     m_Data = move(fileData);
 	m_BankOffset = 0;
 	m_Bank = 0;
@@ -30,6 +31,12 @@ bool ROM::Load(const std::string& filename)
 }
 
 
+void ROM::Unload()
+{
+	m_Data.clear();
+	m_BankOffset = 0;
+	m_Bank = 0;
+}
 
 
 void ROM::Reset()
@@ -42,8 +49,11 @@ void ROM::Reset()
 
 void ROM::SetBank(unsigned char blockId)
 {
-	m_Bank = blockId;
-	m_BankOffset = blockId * BankSize;
+	if (!m_Data.empty())
+	{
+		m_Bank = blockId;
+		m_BankOffset = blockId * BankSize;
+	}
 }
 
 

@@ -16,7 +16,18 @@ public:
 
 	virtual ~ROM() = default;
 
-	virtual bool Load(const std::string& filename);
+	bool HasImage() const
+	{
+		return !m_Data.empty();
+	}
+
+	std::string GetFilename() const
+	{
+		return m_Filename;
+	}
+
+	virtual bool Load(std::string filename);
+	virtual void Unload();
 	virtual void Reset();
 
 	virtual void SetBank(unsigned char blockId);
@@ -26,6 +37,7 @@ public:
 
 private:
 
+	std::string		m_Filename;
 	unsigned char	m_Bank = 0;
 	size_type		m_BankOffset = 0;
 	container_type	m_Data;
