@@ -53,6 +53,9 @@
   ** PSSJ-3 (as used on the later Tandy 1000 series computers) is the same as the
   NCR8496 with the exception that its output is not inverted.
 
+  1/1/2019: Chet Simpson
+  Refactored for use with VCC Color Computer 3 Emulator
+
   28/03/2005 : Sebastien Chevalier
   Update th SN76496Write func, according to SN76489 doc found on SMSPower.
    - On write with 0x80 set to 0, when LastRegister is other then TONE,
