@@ -289,7 +289,7 @@ int InsertModule (char *ModulePath)
 			ModualParms|=1;
 			strcat(String,"Has Configurable options\n");
 		}
-		if (PakPortWrite!=NULL)
+		if (PakPortWrite != NULL || PakPortWriteEx != NULL)
 		{
 			ModualParms|=2;
 			strcat(String,"Is IO writable\n");

@@ -606,6 +606,7 @@ void UnloadModule(unsigned char Slot)
 	GetModuleNameCalls[Slot]=NULL;
 	ConfigModuleCalls[Slot]=NULL;
 	PakPortWriteCalls[Slot]=NULL;
+	PakPortWriteCallsEx[Slot] = NULL;
 	PakPortReadCalls[Slot]=NULL;
 	SetInteruptCallPointerCalls[Slot]=NULL;
 	DmaMemPointerCalls[Slot]=NULL;
