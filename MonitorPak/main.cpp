@@ -1,19 +1,10 @@
+#include "MonitorPak.h"
 #include <windows.h>
+#include <array>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 
-
-#ifdef CPAK_EXPORTS
-#define CPAK_EXPORT extern "C" __declspec(dllexport)
-#else
-#define CPAK_EXPORT
-#endif
-
-
-struct Ports
-{
-	static const unsigned char PutChar = 0x68;
-};
-
-typedef void(*DYNAMICMENUCALLBACK)(const char *, int, int);
 
 
 BOOL WINAPI DllMain(HINSTANCE /*hinstDLL*/, DWORD fdwReason, LPVOID /*lpReserved*/)
@@ -36,27 +27,32 @@ BOOL WINAPI DllMain(HINSTANCE /*hinstDLL*/, DWORD fdwReason, LPVOID /*lpReserved
 
 CPAK_EXPORT void ModuleName(char *moduleName, char *catalogId, DYNAMICMENUCALLBACK /*addMenuCallback*/)
 {
-	strcpy(moduleName, "Console Pak");
-	strcpy(catalogId, "CPak-80");
+	strcpy(moduleName, "Monitor Pak");
+	strcpy(catalogId, "MPak-80");
 }
 
 
 CPAK_EXPORT void ModuleStatus(char *statusBuffer)
 {
-	strcpy(statusBuffer, "CPak Active");
+	strcpy(statusBuffer, "MPak Active");
 }
 
 
-CPAK_EXPORT void PackPortWrite(unsigned char port, unsigned char data)
+
+
+CPAK_EXPORT void PackPortWriteEx(unsigned char port, unsigned char data)
 {
-	if(port == Ports::PutChar)
+	if (port >= 0xa0 && port <= 0xaf)
 	{
-		WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), &data, 1, nullptr, nullptr);
-		if (data == '\r')
-		{
-			data = '\n';
-			WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), &data, 1, nullptr, nullptr);
-		}
+		MMURegisterMirror[port & 0x0f] = data;
+	}
+
+	switch (port)
+	{
+	case Ports::Command:
+		ExecuteCommand(data);
+		break;
+	case Ports::PutChar:
+		WriteLogChar(data);
 	}
 }
-

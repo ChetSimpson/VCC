@@ -159,9 +159,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MonitorPak.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
