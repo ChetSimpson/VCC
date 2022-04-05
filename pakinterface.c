@@ -59,6 +59,7 @@ typedef void (*CONFIGIT)(unsigned char);
 typedef void (*HEARTBEAT) (void);
 typedef unsigned char (*PACKPORTREAD)(unsigned char);
 typedef void (*PACKPORTWRITE)(unsigned char,unsigned char);
+typedef void (*PACKPORTWRITEEX)(unsigned char, unsigned char);
 typedef void (*ASSERTINTERUPT) (unsigned char,unsigned char);
 typedef unsigned char (*MEMREAD8)(unsigned short);
 typedef void (*SETCART)(unsigned char);
@@ -76,7 +77,8 @@ static void (*ConfigModule)(unsigned char)=NULL;
 static void (*SetInteruptCallPointer) ( ASSERTINTERUPT)=NULL;
 static void (*DmaMemPointer) (MEMREAD8,MEMWRITE8)=NULL;
 static void (*HeartBeat)(void)=NULL;
-static void (*PakPortWrite)(unsigned char,unsigned char)=NULL;
+static void (*PakPortWrite)(unsigned char, unsigned char) = NULL;
+static void (*PakPortWriteEx)(unsigned char,unsigned char)=NULL;
 static unsigned char (*PakPortRead)(unsigned char)=NULL;
 static void (*PakMemWrite8)(unsigned char,unsigned short)=NULL;
 static unsigned char (*PakMemRead8)(unsigned short)=NULL;
@@ -133,6 +135,15 @@ unsigned char PackPortRead (unsigned char port)
 		return(PakPortRead(port));
 	else
 		return(NULL);
+}
+
+void PackPortWriteEx(unsigned char Port, unsigned char Data)
+{
+	if (PakPortWriteEx != NULL)
+	{
+		PakPortWriteEx(Port, Data);
+		return;
+	}
 }
 
 void PackPortWrite(unsigned char Port,unsigned char Data)
@@ -242,6 +253,7 @@ int InsertModule (char *ModulePath)
 		SetCart(0);
 		GetModuleName=(GETNAME)GetProcAddress(hinstLib, "ModuleName"); 
 		ConfigModule=(CONFIGIT)GetProcAddress(hinstLib, "ModuleConfig");
+		PakPortWriteEx=(PACKPORTWRITEEX)GetProcAddress(hinstLib, "PackPortWriteEx");
 		PakPortWrite=(PACKPORTWRITE) GetProcAddress(hinstLib, "PackPortWrite");
 		PakPortRead=(PACKPORTREAD) GetProcAddress(hinstLib, "PackPortRead");
 		SetInteruptCallPointer=(SETINTERUPTCALLPOINTER)GetProcAddress(hinstLib, "AssertInterupt");
@@ -397,6 +409,7 @@ void UnloadDll(void)
 	GetModuleName=NULL;
 	ConfigModule=NULL;
 	PakPortWrite=NULL;
+	PakPortWriteEx=NULL;
 	PakPortRead=NULL;
 	SetInteruptCallPointer=NULL;
 	DmaMemPointer=NULL;

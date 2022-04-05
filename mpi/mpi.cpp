@@ -52,6 +52,7 @@ static void (*GetModuleNameCalls[MAXPAX])(char *,char *,DYNAMICMENUCALLBACK)={NU
 static void (*ConfigModuleCalls[MAXPAX])(unsigned char)={NULL,NULL,NULL,NULL};
 static void (*HeartBeatCalls[MAXPAX])(void)={NULL,NULL,NULL,NULL};
 static void (*PakPortWriteCalls[MAXPAX])(unsigned char,unsigned char)={NULL,NULL,NULL,NULL};
+static void (*PakPortWriteCallsEx[MAXPAX])(unsigned char, unsigned char) = { NULL,NULL,NULL,NULL };
 static unsigned char (*PakPortReadCalls[MAXPAX])(unsigned char)={NULL,NULL,NULL,NULL};
 static void (*PakMemWrite8Calls[MAXPAX])(unsigned char,unsigned short)={NULL,NULL,NULL,NULL};
 static unsigned char (*PakMemRead8Calls[MAXPAX])(unsigned short)={NULL,NULL,NULL,NULL};
@@ -249,6 +250,15 @@ extern "C"
 			for(unsigned char Temp=0;Temp<4;Temp++)
 				if (PakPortWriteCalls[Temp] != NULL)
 					PakPortWriteCalls[Temp](Port,Data);
+		return;
+	}
+
+
+	__declspec(dllexport) void PackPortWriteEx(unsigned char Port, unsigned char Data)
+	{
+		for (unsigned char Temp = 0; Temp < 4; Temp++)
+			if (PakPortWriteCallsEx[Temp] != NULL)
+				PakPortWriteCallsEx[Temp](Port, Data);
 		return;
 	}
 }
@@ -545,6 +555,7 @@ unsigned char MountModule(unsigned char Slot,char *ModName)
 		GetModuleNameCalls[Slot]=(GETNAME)GetProcAddress(hinstLib[Slot], "ModuleName"); 
 		ConfigModuleCalls[Slot]=(CONFIGIT)GetProcAddress(hinstLib[Slot], "ModuleConfig");
 		PakPortWriteCalls[Slot]=(PACKPORTWRITE) GetProcAddress(hinstLib[Slot], "PackPortWrite");
+		PakPortWriteCallsEx[Slot] = (PACKPORTWRITE)GetProcAddress(hinstLib[Slot], "PackPortWriteEx");
 		PakPortReadCalls[Slot]=(PACKPORTREAD) GetProcAddress(hinstLib[Slot], "PackPortRead");
 		SetInteruptCallPointerCalls[Slot]=(SETINTERUPTCALLPOINTER)GetProcAddress(hinstLib[Slot], "AssertInterupt");
 

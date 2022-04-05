@@ -179,6 +179,9 @@ void port_write(unsigned char data,unsigned short addr)
 			WriteLog(Message,TOCONS);
 	}
 	*/
+
+	PackPortWriteEx(port, data);
+
 	switch (port)
 	{
 

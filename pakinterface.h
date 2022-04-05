@@ -20,7 +20,8 @@ This file is part of VCC (Virtual Color Computer).
 
 void PakTimer(void);
 unsigned char PackPortRead (unsigned char);
-void PackPortWrite(unsigned char,unsigned char);
+void PackPortWrite(unsigned char, unsigned char);
+void PackPortWriteEx(unsigned char,unsigned char);
 unsigned char PackMem8Read (unsigned short);
 void PackMem8Write(unsigned char,unsigned char);
 void GetModuleStatus( SystemState *);
