@@ -54,6 +54,8 @@ This file is part of VCC (Virtual Color Computer).
 #define	Page3	0x11
 #define NOP_I	0x12
 #define SYNC_I	0x13
+#define RCYCL_I 0x14    //  Clears cycle count
+#define LCYCL_I 0x15    //  Loads cycle count into X(MSB) and D(LSB)
 #define LBRA_R	0x16
 #define LBSR_R	0x17
 #define DAA_I	0x19

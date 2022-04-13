@@ -54,6 +54,7 @@ static unsigned char *ureg8[8];
 static unsigned char ccbits;
 static unsigned short *xfreg16[8];
 static int CycleCounter=0;
+static int InternalCycleCount = 0;
 static unsigned int SyncWaiting=0;
 static unsigned int temp32;
 static unsigned short temp16;
@@ -72,9 +73,9 @@ static char InInterupt=0;
 _inline unsigned short CalculateEA(unsigned char);
 static void setcc (unsigned char);
 static unsigned char getcc(void);
-static void cpu_firq(void);
-static void cpu_irq(void);
-static void cpu_nmi(void);
+static int cpu_firq(void);
+static int cpu_irq(void);
+static int cpu_nmi(void);
 //END Fuction Prototypes-----------------------------------
 
 void MC6809Reset(void)
@@ -92,6 +93,7 @@ void MC6809Reset(void)
 	SyncWaiting=0;
 	pc.Reg=MemRead16(VRESET);	//PC gets its reset vector
 	SetMapType(0);
+	InternalCycleCount = 0;
 	return;
 }
 
@@ -130,22 +132,32 @@ while (CycleCounter<CycleFor) {
 	if (PendingInterupts)
 	{
 		if (PendingInterupts & 4)
-			cpu_nmi();
+		{
+			CycleCounter += cpu_nmi();
+			continue;
+		}
 
 		if (PendingInterupts & 2)
-			cpu_firq();
+		{
+			CycleCounter += cpu_firq();
+			continue;
+		}
+
 
 		if (PendingInterupts & 1)
 		{
-			if (IRQWaiter==0)	// This is needed to fix a subtle timming problem
-				cpu_irq();		// It allows the CPU to see $FF03 bit 7 high before
+			if (IRQWaiter == 0)	// This is needed to fix a subtle timming problem
+			{
+				CycleCounter += cpu_irq();		// It allows the CPU to see $FF03 bit 7 high before
+				continue;
+			}
 			else				// The IRQ is asserted.
 				IRQWaiter-=1;
 		}
 	}
 
 	if (SyncWaiting==1)
-		return(0);
+		return(0);	//	FIXME-CHET: We should return something meaningful here!
 
 switch (MemRead8(pc.Reg++)){
 
@@ -783,6 +795,15 @@ case NOP_I:	//12
 case SYNC_I: //13
 	CycleCounter=CycleFor;
 	SyncWaiting=1;
+	break;
+
+case RCYCL_I: //14
+	InternalCycleCount = 0;
+	break;
+
+case LCYCL_I: //15
+	x.Reg = (InternalCycleCount + CycleCounter) >> 16;
+	d.Reg = (InternalCycleCount + CycleCounter) & 0xffff;
 	break;
 
 case LBRA_R: //16
@@ -2991,13 +3012,15 @@ default:
 	}//End Switch
 }//End While
 
+InternalCycleCount += CycleCounter;
 return(CycleFor-CycleCounter);
 
 }
 
-void cpu_firq(void)
+int cpu_firq(void)
 {
-	
+	int cycles = 0;
+
 	if (!cc[F])
 	{
 		InInterupt=1; //Flag to indicate FIRQ has been asserted
@@ -3008,15 +3031,20 @@ void cpu_firq(void)
 		cc[I]=1;
 		cc[F]=1;
 		pc.Reg=MemRead16(VFIRQ);
+
+		cycles = 10;
 	}
 	PendingInterupts=PendingInterupts & 253;
-	return;
+	return cycles;
 }
 
-void cpu_irq(void)
+int cpu_irq(void)
 {
 	if (InInterupt==1) //If FIRQ is running postpone the IRQ
-		return;			
+		return 0;
+
+	int cycles = 0;
+
 	if ((!cc[I]) )
 	{
 		cc[E]=1;
@@ -3034,12 +3062,14 @@ void cpu_irq(void)
 		MemWrite8(getcc(),--s.Reg);
 		pc.Reg=MemRead16(VIRQ);
 		cc[I]=1; 
+
+		cycles = 19;
 	} //Fi I test
 	PendingInterupts=PendingInterupts & 254;
-	return;
+	return cycles;
 }
 
-void cpu_nmi(void)
+int cpu_nmi(void)
 {
 	cc[E]=1;
 	MemWrite8( pc.B.lsb,--s.Reg);
@@ -3058,7 +3088,7 @@ void cpu_nmi(void)
 	cc[F]=1;
 	pc.Reg=MemRead16(VNMI);
 	PendingInterupts=PendingInterupts & 251;
-	return;
+	return 19;
 }
 
 /*
