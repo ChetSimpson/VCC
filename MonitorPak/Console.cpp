@@ -7,6 +7,10 @@
 
 
 std::array<u_char, 16> MMURegisterMirror = { 0 };
+unsigned char CommandDataA;
+unsigned char CommandDataB;
+unsigned char CommandDataC;
+unsigned char CommandDataD;
 
 
 

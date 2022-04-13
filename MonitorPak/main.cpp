@@ -49,6 +49,18 @@ CPAK_EXPORT void PackPortWriteEx(unsigned char port, unsigned char data)
 
 	switch (port)
 	{
+	case Ports::DataA:
+		CommandDataA = data;
+		break;
+	case Ports::DataB:
+		CommandDataB = data;
+		break;
+	case Ports::DataC:
+		CommandDataC = data;
+		break;
+	case Ports::DataD:
+		CommandDataD = data;
+		break;
 	case Ports::Command:
 		ExecuteCommand(data);
 		break;
