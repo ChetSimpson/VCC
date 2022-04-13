@@ -59,7 +59,7 @@ void DumpAllCycles()
 	std::ostringstream buffer;
 
 	buffer
-		<< "\nCycle counts:\n"
+		//<< "\nCycle counts:\n"
 		<< "Update Cycles: " << GlobalUpdateCycles << "\n"
 		<< "Restore Cycles: " << GlobalRestoreCycles << "\n"
 		<< "Draw Cycles: " << GlobalDrawCycles << "\n";

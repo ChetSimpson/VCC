@@ -156,8 +156,11 @@ while (CycleCounter<CycleFor) {
 		}
 	}
 
-	if (SyncWaiting==1)
-		return(0);	//	FIXME-CHET: We should return something meaningful here!
+	if (SyncWaiting == 1)
+	{
+		InternalCycleCount += CycleCounter;
+		return(CycleFor - CycleCounter);
+	}
 
 switch (MemRead8(pc.Reg++)){
 
