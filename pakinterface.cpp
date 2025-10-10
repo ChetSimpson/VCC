@@ -256,20 +256,22 @@ int InsertModule (const char *ModulePath)
 		BeginCartMenu();
 
 		SetCart(0);
-		GetModuleName=(GETNAME)GetProcAddress(hinstLib, "ModuleName");
-		ConfigModule=(CONFIGIT)GetProcAddress(hinstLib, "ModuleConfig");
-		PakPortWrite=(PACKPORTWRITE) GetProcAddress(hinstLib, "PackPortWrite");
-		PakPortRead=(PACKPORTREAD) GetProcAddress(hinstLib, "PackPortRead");
-		SetInteruptCallPointer=(SETINTERUPTCALLPOINTER)GetProcAddress(hinstLib, "AssertInterupt");
-		DmaMemPointer=(DMAMEMPOINTERS) GetProcAddress(hinstLib, "MemPointers");
-		HeartBeat=(HEARTBEAT) GetProcAddress(hinstLib, "HeartBeat");
-		PakMemWrite8=(MEMWRITE8) GetProcAddress(hinstLib, "PakMemWrite8");
-		PakMemRead8=(MEMREAD8) 	GetProcAddress(hinstLib, "PakMemRead8");
-		ModuleStatus=(MODULESTATUS) GetProcAddress(hinstLib, "ModuleStatus");
-		ModuleAudioSample=(MODULEAUDIOSAMPLE) GetProcAddress(hinstLib, "ModuleAudioSample");
-		ModuleReset=(MODULERESET) GetProcAddress(hinstLib, "ModuleReset");
-		SetIniPath=(SETINIPATH) GetProcAddress(hinstLib,"SetIniPath");
-		PakSetCart=(SETCARTPOINTER) GetProcAddress(hinstLib,"SetCart");
+
+		ModulePlugin plugin(hinstLib);
+		plugin.GetModuleName=(GETNAME)GetProcAddress(hinstLib, "ModuleName");
+		plugin.ConfigModule=(CONFIGIT)GetProcAddress(hinstLib, "ModuleConfig");
+		plugin.PakPortWrite=(PACKPORTWRITE) GetProcAddress(hinstLib, "PackPortWrite");
+		plugin.PakPortRead=(PACKPORTREAD) GetProcAddress(hinstLib, "PackPortRead");
+		plugin.SetInteruptCallPointer=(SETINTERUPTCALLPOINTER)GetProcAddress(hinstLib, "AssertInterupt");
+		plugin.DmaMemPointer=(DMAMEMPOINTERS) GetProcAddress(hinstLib, "MemPointers");
+		plugin.HeartBeat=(HEARTBEAT) GetProcAddress(hinstLib, "HeartBeat");
+		plugin.PakMemWrite8=(MEMWRITE8) GetProcAddress(hinstLib, "PakMemWrite8");
+		plugin.PakMemRead8=(MEMREAD8) 	GetProcAddress(hinstLib, "PakMemRead8");
+		plugin.ModuleStatus=(MODULESTATUS) GetProcAddress(hinstLib, "ModuleStatus");
+		plugin.ModuleAudioSample=(MODULEAUDIOSAMPLE) GetProcAddress(hinstLib, "ModuleAudioSample");
+		plugin.ModuleReset=(MODULERESET) GetProcAddress(hinstLib, "ModuleReset");
+		plugin.SetIniPath=(SETINIPATH) GetProcAddress(hinstLib,"SetIniPath");
+		plugin.PakSetCart=(SETCARTPOINTER) GetProcAddress(hinstLib,"SetCart");
 		if (GetModuleName == nullptr)
 		{
 			FreeLibrary(hinstLib);
