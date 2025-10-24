@@ -164,9 +164,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_MODULE_NAME         "ACIA Interface"
+    IDS_MODULE_NAME         "Tandy Deluxe RS232 Pak (Beta)"
+    IDS_CATNUMBER           "26-2226"
+	IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
     IDS_VERSION             "1.00"
-    IDS_CATNUMBER           "Beta"
 END
 
 #endif    // English (United States) resources

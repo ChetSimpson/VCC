@@ -155,6 +155,7 @@ BEGIN
     IDS_MODULE_NAME         "Hard Drive"
     IDS_VERSION             "2.0.2"
     IDS_CATNUMBER           "+ Cloud9 RTC"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
 END
 
 #endif    // English (U.S.) resources

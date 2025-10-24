@@ -102,6 +102,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_MODULE_NAME         "RamDisk"
     IDS_CATNUMBER           "00-0000"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
 END
 
 #endif    // English (U.S.) resources

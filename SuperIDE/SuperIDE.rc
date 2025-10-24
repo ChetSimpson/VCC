@@ -142,6 +142,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_MODULE_NAME         "Glenside-IDE /w Clock"
     IDS_CATNUMBER           "000"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
 END
 
 #endif    // English (U.S.) resources

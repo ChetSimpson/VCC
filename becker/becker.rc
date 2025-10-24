@@ -134,6 +134,7 @@ BEGIN
     IDS_MODULE_NAME         "HDBDOS/DW/Becker"
     IDS_VERSION             "1.00"
     IDS_CATNUMBER           "00-0000"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
 END
 
 #endif    // English (U.S.) resources

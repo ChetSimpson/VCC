@@ -84,6 +84,20 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_MODULE_NAME         "Game Master Catridge"
+    IDS_CATNUMBER           "26-XXXX"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
+    IDS_VERSION             "1.0"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

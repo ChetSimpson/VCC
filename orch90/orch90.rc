@@ -103,6 +103,7 @@ BEGIN
     IDS_MODULE_NAME         "Orchestra-90"
     IDS_CATNUMBER           "26-3143"
     IDS_VERSION             "1.30"
+    IDS_DESCRIPTION         "[TODO: DESCRIPTION]"
 END
 
 #endif    // English (U.S.) resources
