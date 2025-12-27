@@ -355,8 +355,7 @@ unsigned char DropDisk(unsigned char DiskNumber)
 	return TRUE;
 }
 
-void QueryDisk(unsigned char DiskNumber,char *Name)
+std::filesystem::path QueryDisk(unsigned char DiskNumber)
 {
-	strcpy(Name,FileNames[DiskNumber]);
-	return;
+	return FileNames[DiskNumber];
 }

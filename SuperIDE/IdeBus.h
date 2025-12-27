@@ -18,6 +18,7 @@ This file is part of VCC (Virtual Color Computer).
     along with VCC (Virtual Color Computer).  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <string>
+#include <filesystem>
 
 struct IDEINTERFACE {
 	unsigned short	Data;
@@ -37,7 +38,7 @@ unsigned short IdeRegRead(unsigned char);
 std::string DiskStatus();
 unsigned char MountDisk(const char *,unsigned char );
 unsigned char DropDisk(unsigned char);
-void QueryDisk(unsigned char,char *);
+std::filesystem::path QueryDisk(unsigned char);
 //Status 
 #define ERR		1	//Previous command ended in an error
 #define IDX		2	//Unused

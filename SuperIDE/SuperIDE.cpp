@@ -20,6 +20,7 @@
 #include "resource.h" 
 #include "vcc/devices/rtc/ds1315.h"
 #include "vcc/ui/menu/menu_builder.h"
+#include "vcc/utils/persistent_value_section_store.h"
 #include "vcc/utils/FileOps.h"
 #include "vcc/ui/utility.h"
 #include "vcc/utils/winapi.h"
@@ -28,7 +29,7 @@
 
 static char FileName[MAX_PATH] { 0 };
 static char IniFile[MAX_PATH]  { 0 };
-static char SuperIDEPath[MAX_PATH];
+static std::filesystem::path SuperIDEPath;
 static ::vcc::devices::rtc::ds1315 ds1315_rtc;
 static unsigned char BaseAddress=0x50;
 static LRESULT CALLBACK Config(HWND, UINT, WPARAM, LPARAM );
@@ -176,28 +177,17 @@ void superide_cartridge::menu_item_clicked(menu_item_id_type item_id)
 
 superide_cartridge::menu_item_collection_type superide_cartridge::get_menu_items() const
 {
-	char TempMsg[512]="";
-	char TempBuf[MAX_PATH]="";
-
 	::vcc::ui::menu::menu_builder builder;
 
-	QueryDisk(MASTER,TempBuf);
-	strcpy(TempMsg,"Eject: ");
-	PathStripPath (TempBuf);
-	strcat(TempMsg,TempBuf);
 	builder
 		.add_root_submenu("IDE Master")
 		.add_submenu_item(10, "Insert")
-		.add_submenu_item(11, TempMsg);
+		.add_submenu_item(11, "Eject: " + QueryDisk(MASTER).filename().string());
 
-	QueryDisk(SLAVE,TempBuf);
-	strcpy(TempMsg,"Eject: ");
-	PathStripPath (TempBuf);
-	strcat(TempMsg,TempBuf);
 	builder
 		.add_root_submenu("IDE Slave")
 		.add_submenu_item(12, "Insert")
-		.add_submenu_item(13, TempMsg);
+		.add_submenu_item(13, "Eject: " + QueryDisk(SLAVE).filename().string());
 
 	builder.add_root_item(14, "IDE Config");
 
@@ -298,33 +288,40 @@ void Select_Disk([[maybe_unused]] unsigned char Disk)
 
 void SaveConfig()
 {
-	QueryDisk(MASTER,FileName);
-	WritePrivateProfileString(gConfigurationSection,"Master",FileName,IniFile);
-	QueryDisk(SLAVE,FileName);
-	WritePrivateProfileString(gConfigurationSection,"Slave",FileName,IniFile);
-	WritePrivateProfileInt(gConfigurationSection,"BaseAddr",BaseAddr ,IniFile);
-	WritePrivateProfileInt(gConfigurationSection,"ClkEnable",ClockEnabled ,IniFile);
-	WritePrivateProfileInt(gConfigurationSection, "ClkRdOnly", ClockReadOnly, IniFile);
-	if (strcmp(SuperIDEPath, "") != 0) { 
-		WritePrivateProfileString("DefaultPaths", "SuperIDEPath", SuperIDEPath, IniFile); 
-	}
+	::vcc::utils::persistent_value_section_store value_store(IniFile, gConfigurationSection);
 
-	return;
+	value_store.write("Master", QueryDisk(MASTER));
+	value_store.write("Slave", QueryDisk(SLAVE));
+	value_store.write("BaseAddr", BaseAddr);
+	value_store.write("ClkEnable", ClockEnabled);
+	value_store.write("ClkRdOnly", ClockReadOnly);
+	if (SuperIDEPath.empty())
+	{
+		value_store.remove("SuperIDEPath");
+	}
+	else
+	{
+		value_store.write("SuperIDEPath", SuperIDEPath);
+	}
 }
 
 void superide_cartridge::LoadConfig()
 {
-	GetPrivateProfileString("DefaultPaths", "SuperIDEPath", "", SuperIDEPath, MAX_PATH, IniFile);
-	GetPrivateProfileString(gConfigurationSection,"Master","",FileName,MAX_PATH,IniFile);
-	MountDisk(FileName ,MASTER);
-	GetPrivateProfileString(gConfigurationSection,"Slave","",FileName,MAX_PATH,IniFile);
-	BaseAddr=GetPrivateProfileInt(gConfigurationSection,"BaseAddr",1,IniFile); 
-	ClockEnabled = GetPrivateProfileInt(gConfigurationSection, "ClkEnable", true, IniFile) != 0;
-	ClockReadOnly = GetPrivateProfileInt(gConfigurationSection, "ClkRdOnly", true, IniFile) != 0;
-	BaseAddr&=3;
+	::vcc::utils::persistent_value_section_store value_store(IniFile, gConfigurationSection);
+
+	SuperIDEPath = value_store.read("SuperIDEPath");
+	BaseAddr = value_store.read("BaseAddr", 1) & 0x03;
+	ClockEnabled = value_store.read("ClkEnable", true);
+	ClockReadOnly = value_store.read("ClkRdOnly", true);
+
 	if (BaseAddr == 3)
+	{
 		ClockEnabled = false;
-	BaseAddress=BaseTable[BaseAddr];
+	}
+
+	BaseAddress = BaseTable[BaseAddr];
+
 	ds1315_rtc.set_read_only(ClockReadOnly);
-	MountDisk(FileName ,SLAVE);
+	MountDisk(value_store.read("Master").c_str(), MASTER);
+	MountDisk(value_store.read("Slave").c_str(), SLAVE);
 }
