@@ -331,7 +331,7 @@ vcc_hard_disk_cartridge::menu_item_collection_type vcc_hard_disk_cartridge::get_
 	builder
 		.add_root_submenu("HD Drive 1")
 		.add_submenu_item(12, "Insert")
-		.add_submenu_item(11, "Eject " + VHDfile1.filename().string());
+		.add_submenu_item(13, "Eject " + VHDfile1.filename().string());
 
 	builder.add_root_item(14, "HD Config");
 
