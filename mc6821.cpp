@@ -481,7 +481,7 @@ void CaptureBit(unsigned char Sample)
 	return;
 }
 
-bool OpenPrintFile(const std::filesystem::path& path)
+bool OpenPrintSpoolFile(const std::filesystem::path& path)
 {
 	// If a print file is already open, close it to avoid leaking the handle.
 	if (hPrintFile != INVALID_HANDLE_VALUE)

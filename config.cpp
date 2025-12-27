@@ -723,7 +723,7 @@ LRESULT CALLBACK TapeConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPa
 			IDC_TAPEFILE,
 			WM_SETTEXT,
 			0,
-			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(GetTapeName().string().c_str())));
+			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(GetTapeName().filename().string().c_str())));
 		SendDlgItemMessage(hDlg,IDC_TCOUNT,EM_SETBKGNDCOLOR ,0,(LPARAM)RGB(0,0,0));
 		SendDlgItemMessage(hDlg,IDC_TCOUNT,EM_SETCHARFORMAT ,SCF_ALL,(LPARAM)&CounterText);
 		SendDlgItemMessage(hDlg,IDC_MODE,EM_SETBKGNDCOLOR ,0,(LPARAM)RGB(0,0,0));
@@ -1527,6 +1527,8 @@ void OpenBitBangerConfig() {
 }
 LRESULT CALLBACK BitBanger(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/)
 {
+	static const char no_capture_file_selected_text[]("No spool file selected");
+
 	switch (message) {
 	case WM_INITDIALOG: //IDC_PRINTMON
 		SendDlgItemMessage(
@@ -1534,7 +1536,7 @@ LRESULT CALLBACK BitBanger(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPar
 			IDC_SERIALFILE,
 			WM_SETTEXT,
 			0,
-			reinterpret_cast<LPARAM>(static_cast<LPCSTR>("No file selected")));
+			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(no_capture_file_selected_text)));
 
 		SendDlgItemMessage(hDlg,IDC_LF,BM_SETCHECK,TextMode,0);
 		SendDlgItemMessage(hDlg,IDC_PRINTMON,BM_SETCHECK,PrtMon,0);
@@ -1578,7 +1580,7 @@ LRESULT CALLBACK BitBanger(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPar
 				IDC_SERIALFILE,
 				WM_SETTEXT,
 				0,
-				reinterpret_cast<LPARAM>(static_cast<LPCSTR>("No Capture File")));
+				reinterpret_cast<LPARAM>(static_cast<LPCSTR>(no_capture_file_selected_text)));
 			PrtMon=FALSE;
 			SetMonState(PrtMon);
 			SendDlgItemMessage(hDlg,IDC_PRINTMON,BM_SETCHECK,PrtMon,0);
@@ -1634,7 +1636,7 @@ std::filesystem::path SelectPrintSpoolFile()
 	const auto selected_file(select_dialog.selected_path());
 
 	ClosePrintSpoolFile();
-	if (!OpenPrintFile(selected_file))
+	if (!OpenPrintSpoolFile(selected_file))
 	{
 		MessageBox(EmuState.WindowHandle, "Can't open file.", "Error", 0);
 		return {};

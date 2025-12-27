@@ -41,7 +41,7 @@ unsigned int DACState();
 unsigned int GetDACSample();
 unsigned char GetCasSample();
 void SetCassetteSample(unsigned char);
-bool OpenPrintFile(const std::filesystem::path& path);
+bool OpenPrintSpoolFile(const std::filesystem::path& path);
 // FIXME: These need to be turned into an enum and the signature of functions
 // that use them updated.
 constexpr auto FALLING	= 0u;
