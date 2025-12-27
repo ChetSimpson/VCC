@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "create_disk_image_dialog.h"
 #include "resource.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include <fstream>
 
 
@@ -77,7 +77,7 @@ namespace vcc::cartridges::fd502
 		// is given to the default control (if there is one).
 		(void)dialog_window::on_init_dialog();
 
-		CenterDialog(handle());
+		::vcc::ui::center_window_to_parent(handle());
 
 		disk_image_layout_ = defaults::image_layout;
 		double_sided_ = defaults::double_sided;

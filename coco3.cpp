@@ -651,19 +651,6 @@ uint8_t CassInByteStream()
 	return LastMotorState ? CassBuffer[CassIndex++] : CAS_SILENCE;
 }
 
-//
-// In fast load mode, byte stream is two samples per bit high & low,
-// the type of bit (0 or 1) depends on the period. based on this pass
-// the period to basic at address $83.
-//
-uint8_t CassInBitStream()
-{
-	uint8_t nextHalfBit = CassInByteStream();
-	// set counter time for one lo-hi cycle, basic checks for >18 (0bit) or <18 (1bit)
-	MemWrite8(nextHalfBit & 1 ? 10 : 20, 0x83);
-	return nextHalfBit >> 1;
-}
-
 void CassIn()
 {
 	// fade ramp state

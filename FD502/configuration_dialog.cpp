@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "configuration_dialog.h"
 #include "resource.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "vcc/ui/select_file_dialog.h"
 #include "vcc/utils/winapi.h"
 
@@ -104,7 +104,7 @@ namespace vcc::cartridges::fd502
 
 		selected_rom_id_ = configuration_->get_rom_image_id();
 
-		CenterDialog(handle());
+		::vcc::ui::center_window_to_parent(handle());
 
 		set_button_check(IDC_SETTINGS_GENERAL_ENABLE_RTC, configuration_->is_rtc_enabled());
 		set_button_check(IDC_SETTINGS_GENERAL_TURBO, configuration_->is_turbo_mode_enabled());

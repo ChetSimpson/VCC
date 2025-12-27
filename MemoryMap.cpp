@@ -30,8 +30,8 @@
 #include "tcc1014mmu.h"
 #include "resource.h"
 #include "pakinterface.h"
+#include <vcc/ui/select_file_dialog.h>
 #include "vcc/utils/logger.h"
-#include "vcc/common/DialogOps.h"
 #include <fstream>
 
 namespace VCC::Debugger::UI { namespace {
@@ -609,17 +609,21 @@ void ExportMemory()
 		return;
 	}
 
-	FileDialog dlg;
-	dlg.setFilter("BIN\0*.bin\0\0");
-	dlg.setDefExt("bin");
-	dlg.setTitle(TEXT("Export Memory Range"));
-	dlg.setFlags(OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT);
+	::vcc::ui::select_file_dialog select_dialog;
 
-	if (dlg.show(1)) {
-		std::ofstream fout(dlg.path(), std::ios::out | std::ios::trunc
-			| std::ios::binary);
+	select_dialog.set_title(TEXT("Export Memory Range"))
+		.set_selection_filter({ { "Raw Memory Dump", {"*.bin", "*.data"}}})
+		.set_default_extension("bin")
+		.append_flags(OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT);
 
-		for (int adr = selectionRangeBeg; adr <= selectionRangeEnd; adr++) {
+	if (select_dialog.do_modal_save_dialog())
+	{
+		std::ofstream fout(
+			select_dialog.selected_path(),
+			std::ios::out | std::ios::trunc | std::ios::binary);
+
+		for (int adr = selectionRangeBeg; adr <= selectionRangeEnd; adr++)
+		{
 			unsigned char val = ReadMemory(adr);
 			fout.write(reinterpret_cast<const char *>(&val), sizeof(val));
 		}

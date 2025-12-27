@@ -78,7 +78,6 @@
     <ClCompile Include="src\devices\rtc\ds1315.cpp" />
     <ClCompile Include="src\devices\rtc\oki_m6242b.cpp" />
     <ClCompile Include="src\devices\serial\beckerport.cpp" />
-    <ClCompile Include="src\DialogOps.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\media\disk_image.cpp" />
     <ClCompile Include="src\media\disk_images\generic_disk_image.cpp" />
@@ -93,6 +92,7 @@
     <ClCompile Include="src\ui\menu\menu_builder.cpp" />
     <ClCompile Include="src\ui\menu\menu_item_collection.cpp" />
     <ClCompile Include="src\peripherals\disk_drives\generic_disk_drive.cpp" />
+    <ClCompile Include="src\ui\utility.cpp" />
     <ClCompile Include="src\utils\basic_guid.cpp" />
     <ClCompile Include="src\utils\cartridge_catalog.cpp" />
     <ClCompile Include="src\utils\cartridge_loader.cpp" />
@@ -117,7 +117,6 @@
     <ClInclude Include="include\vcc\bus\cartridge_factory.h" />
     <ClInclude Include="include\vcc\bus\expansion_port_host.h" />
     <ClInclude Include="include\vcc\bus\expansion_port.h" />
-    <ClInclude Include="include\vcc\common\DialogOps.h" />
     <ClInclude Include="include\vcc\detail\exports.h" />
     <ClInclude Include="include\vcc\devices\psg\sn76496.h" />
     <ClInclude Include="include\vcc\devices\rom\banked_rom_image.h" />
@@ -151,6 +150,7 @@
     <ClInclude Include="include\vcc\ui\menu\menu_builder.h" />
     <ClInclude Include="include\vcc\ui\menu\menu_item_collection.h" />
     <ClInclude Include="include\vcc\ui\menu\menu_item_visitor.h" />
+    <ClInclude Include="include\vcc\ui\utility.h" />
     <ClInclude Include="include\vcc\utils\borrowed_ptr.h" />
     <ClInclude Include="include\vcc\utils\cartridge_catalog.h" />
     <ClInclude Include="include\vcc\utils\cartridge_catalog_item.h" />

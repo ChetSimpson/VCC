@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "configuration_dialog.h"
 #include "resource.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "vcc/utils/winapi.h"
 #include <stdexcept>
 
@@ -71,7 +71,7 @@ namespace vcc::cartridges::becker_port
 
 	void configuration_dialog::close()
 	{
-		CloseCartDialog(dialog_handle_);
+		::vcc::ui::close_cartridge_dialog_window(dialog_handle_);
 	}
 
 
@@ -105,7 +105,7 @@ namespace vcc::cartridges::becker_port
 		case WM_INITDIALOG:
 			dialog_handle_ = hDlg;
 
-			CenterDialog(hDlg);
+			::vcc::ui::center_window_to_parent(hDlg);
 
 			SendDlgItemMessage(
 				hDlg,

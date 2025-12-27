@@ -22,7 +22,8 @@ This file is part of VCC (Virtual Color Computer).
 #include "defines.h"
 #include "coco3.h"
 #include "config.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/select_file_dialog.h"
+#include <vcc/utils/persistent_value_section_store.h>
 #include "Cassette.h"
 #include "stdio.h"
 #include "vcc/utils/logger.h"
@@ -31,8 +32,7 @@ This file is part of VCC (Virtual Color Computer).
 unsigned char MotorState=0,TapeMode=STOP,WriteProtect=0,Quiet=30;
 static HANDLE TapeHandle=nullptr;
 static unsigned long TapeOffset=0,TotalSize=0;
-static char TapeFileName[MAX_PATH]="";
-static char CassPath[MAX_PATH];
+static std::filesystem::path TapeFileName;
 static unsigned char TempBuffer[8192];
 static unsigned char *CasBuffer=nullptr;
 static char TapeWritten = 0;
@@ -265,7 +265,7 @@ void SetTapeMode(unsigned char Mode)	//Handles button pressed from Dialog
 
 		case EJECT:
 			CloseTapeFile();
-			strcpy(TapeFileName,"EMPTY");
+			TapeFileName.clear();
 		break;
 	}
 	UpdateTapeCounter(TapeOffset,TapeMode);
@@ -447,34 +447,41 @@ void CloseTapeFile()
 	TotalSize=0;
 }
 
-unsigned int LoadTape()
+bool LoadTape()
 {
-	FileDialog dlg;
-	char IniFilePath[MAX_PATH];
-	GetIniFilePath(IniFilePath);
-	GetPrivateProfileString("DefaultPaths","CassPath","",CassPath,MAX_PATH,IniFilePath);
-	dlg.setInitialDir(CassPath);
-	dlg.setFilter("Cassette Files (.cas,.wav)\0*.cas;*.wav\0\0");
-	dlg.setTitle("Insert Tape Image");
-	dlg.setFlags(OFN_NOTESTFILECREATE);
-	if (dlg.show()) {
-		dlg.getpath(TapeFileName,MAX_PATH);
-		if (MountTape(TapeFileName)==0)	{
-			MessageBox(nullptr,"Can't open file","Error",0);
-			return 0;
-		}
+	const auto cassette_path_key_name("CassPath");
+	const ::vcc::utils::persistent_value_section_store value_store(
+		GetIniFilePath(),
+		"DefaultPaths");
+
+	::vcc::ui::select_file_dialog select_dialog;
+	select_dialog
+		.set_title("Select Cassette Tape Image")
+		.set_selection_filter({ { "Cassette Files", { "*.cas", "*.wav" } } })
+		.set_initial_directory(value_store.read(cassette_path_key_name))
+		.append_flags(OFN_NOTESTFILECREATE);
+	if (!select_dialog.do_modal_load_dialog())
+	{
+		return false;
 	}
-	dlg.getdir(CassPath);
-	if (strcmp(CassPath, "") != 0)
-		WritePrivateProfileString("DefaultPaths","CassPath",CassPath,IniFilePath);
+
+	const auto& selected_path(select_dialog.selected_path());
+	if (MountTape(selected_path.string().c_str()) == 0)
+	{
+		MessageBox(nullptr, "Can't open file", "Error", 0);
+		return false;
+	}
+
+	value_store.write(cassette_path_key_name, selected_path.parent_path());
+	TapeFileName = selected_path;
 	TapeWritten = false;
-	return 1;
+
+	return true;
 }
 
-void GetTapeName(char *Name)
+std::filesystem::path GetTapeName()
 {
-	strcpy(Name,TapeFileName);
-	return;
+	return TapeFileName;
 }
 
 void SyncFileBuffer ()

@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\common">
-      <UniqueIdentifier>{e3605b96-8b07-4c6f-8e0c-0c0f7ef7e1f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\common">
-      <UniqueIdentifier>{e1fb644c-d8fe-42cf-a190-8a3037bb20f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\devices">
       <UniqueIdentifier>{b50b01e9-581e-4c73-8f71-43979671a294}</UniqueIdentifier>
     </Filter>
@@ -123,9 +117,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DialogOps.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -237,13 +228,13 @@
     <ClCompile Include="src\utils\cartridge_catalog.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\utility.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource\resource.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\vcc\common\DialogOps.h">
-      <Filter>Header Files\common</Filter>
     </ClInclude>
     <ClInclude Include="include\vcc\devices\rtc\ds1315.h">
       <Filter>Header Files\devices\rtc</Filter>
@@ -424,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="include\vcc\utils\exception.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\ui\utility.h">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

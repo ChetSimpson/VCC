@@ -44,7 +44,7 @@ This file is part of VCC (Virtual Color Computer).
 #include <mmsystem.h>
 #include "vcc/ui/menu/menu_builder.h"
 #include "vcc/utils/FileOps.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "defines.h"
 #include "resource.h"
 #include "joystickinput.h"
@@ -942,7 +942,7 @@ BOOL CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/)
 	{
 		case WM_INITDIALOG:
 			SendDlgItemMessage(hDlg,IDC_TITLE,WM_SETTEXT,0,(LPARAM)(LPCSTR)g_szAppName);
-			CenterDialog(hDlg);
+			::vcc::ui::center_window_to_parent(hDlg);
 			return TRUE;
 		case WM_CLOSE:
 			EndDialog(hDlg, LOWORD(wParam));

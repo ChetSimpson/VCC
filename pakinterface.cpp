@@ -30,7 +30,6 @@
 #include "vcc/utils/logger.h"
 #include "vcc/utils/FileOps.h"
 #include "vcc/utils/filesystem.h"
-#include "vcc/common/DialogOps.h"
 #include <fstream>
 #include <Windows.h>
 #include <commdlg.h>

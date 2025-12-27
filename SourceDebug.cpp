@@ -23,7 +23,7 @@
 #include "DebuggerUtils.h"
 #include "defines.h"
 #include "resource.h"
-#include "vcc/common/DialogOps.h"
+#include <vcc/ui/select_file_dialog.h>
 #include <map>
 #include <fstream>
 #include <string>
@@ -120,13 +120,24 @@ namespace VCC::Debugger::UI { namespace
 
 	void SelectSourceListing(HWND parentWindow)
 	{
-		FileDialog dlg;
-		dlg.setFilter("LWASM listing file (*.lst)\0*.lst\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0\0");
-		dlg.setFlags(OFN_FILEMUSTEXIST);
-		dlg.setTitle("Load LWASM Source Listing");
-		if ( dlg.show(0,parentWindow) ) {
-			if (!LoadSource(dlg.path()))
-				MessageBox(parentWindow,"Can't open source listing","Error",0);
+		::vcc::ui::select_file_dialog select_dialog;
+
+		select_dialog
+			.set_title("Load Source Listing")
+			.set_selection_filter(
+				{
+					{ "LWASM listing file", { "*.lst" } },
+					{ "Text File", { "*.txt" } },
+					{ "All Files", { "*.*" } }
+				})
+			.append_flags(OFN_FILEMUSTEXIST);
+
+		if (select_dialog.do_modal_load_dialog(parentWindow))
+		{
+			if (!LoadSource(select_dialog.selected_path().string().c_str()))
+			{
+				MessageBox(parentWindow, "Failed to load source listing", "Error", 0);
+			}
 		}
 	}
 

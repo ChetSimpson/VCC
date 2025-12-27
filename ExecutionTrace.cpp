@@ -28,7 +28,7 @@ This file is part of VCC (Virtual Color Computer).
 #include <cstddef>
 #include <array>
 #include <windowsx.h>
-#include "vcc/common/DialogOps.h"
+#include <vcc/ui/select_file_dialog.h>
 #include "vcc/utils/FileOps.h"
 #include "vcc/utils/logger.h"
 
@@ -70,7 +70,6 @@ namespace VCC::Debugger::UI { namespace
 
 	int ExportStart=1;
 	int ExportStop=0;
-	char ExportPath[MAX_PATH]={};
 
 //-------------------------------------------------------------------------------
 	const char *ToCCStringCStr(const unsigned char CC)
@@ -1220,19 +1219,25 @@ namespace VCC::Debugger::UI { namespace
 //-------------------------------------------------------------------------------
 //  Select file using standard dialog
 //-------------------------------------------------------------------------------
-	BOOL ChooseTraceFile(HWND hOwn,char * filename,int namsiz)
+	std::filesystem::path ChooseTraceFile(HWND hOwn)
 	{
-		FileDialog dlg;
-		dlg.setFilter("Text File\0*.txt;\0All files\0*.*\0\0");
-		dlg.setDefExt("txt");
-		dlg.setTitle("Select Trace File");
-		dlg.setFlags(OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT);
-		if ( dlg.show(1,hOwn) ) {
-			dlg.getpath(filename,namsiz);
-			return TRUE;
-		} else {
-			return FALSE;
+		::vcc::ui::select_file_dialog select_dialog;
+
+		select_dialog
+			.set_title("Select Trace File")
+			.set_selection_filter(
+				{
+					{ "Text File", { "*.txt" } },
+					{ "All files", { "*.*" } }
+				})
+			.set_default_extension("txt")
+			.append_flags(OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT);
+		if (select_dialog.do_modal_save_dialog(hOwn))
+		{
+			return select_dialog.selected_path();
 		}
+
+		return {};
 	}
 
 //-------------------------------------------------------------------------------
@@ -1257,17 +1262,28 @@ namespace VCC::Debugger::UI { namespace
 					return FALSE;
 				}
 
-				ChooseTraceFile(hDlg, ExportPath, MAX_PATH);
-				HANDLE hFile = CreateFile(ExportPath, GENERIC_READ | GENERIC_WRITE,
-				                0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-				if (hFile != INVALID_HANDLE_VALUE) {
-					WriteTrace(hFile,ExportStart,count);
-					CloseHandle(hFile);
-					EndDialog(hDlg, (INT_PTR) nullptr);
-				} else {
-					SetDlgItemText(hDlg,IDC_ERROR_TEXT,"File create failed!");
-					return FALSE;
+				if(const auto& selected_path(ChooseTraceFile(hDlg)); !selected_path.empty())
+				{
+					HANDLE hFile = CreateFile(
+						selected_path.string().c_str(),
+						GENERIC_READ | GENERIC_WRITE,
+						0,
+						nullptr,
+						CREATE_ALWAYS,
+						FILE_ATTRIBUTE_NORMAL,
+						nullptr);
+					if (hFile != INVALID_HANDLE_VALUE) {
+						WriteTrace(hFile, ExportStart, count);
+						CloseHandle(hFile);
+						EndDialog(hDlg, (INT_PTR) nullptr);
+					}
+					else
+					{
+						SetDlgItemText(hDlg, IDC_ERROR_TEXT, "File create failed!");
+						return FALSE;
+					}
 				}
+
 				return TRUE;
 			}
 			case IDCANCEL:

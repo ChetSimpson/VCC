@@ -118,6 +118,8 @@ namespace vcc::ui
 		dialog_params.Flags = flags_;
 		dialog_params.lpstrDefExt = default_extension_.c_str();
 
+		selected_file_.clear();
+
 		const auto result(
 			use_save_dialog
 			? GetSaveFileName(&dialog_params)

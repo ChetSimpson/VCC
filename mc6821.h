@@ -19,13 +19,14 @@ This file is part of VCC (Virtual Color Computer).
 */
 
 #include <Windows.h>
+#include <filesystem>
 
 unsigned char pia0_read(unsigned char port);
 void pia0_write(unsigned char data,unsigned char port);
 unsigned char pia1_read(unsigned char port);
 void pia1_write(unsigned char data,unsigned char port);
 
-void ClosePrintFile();
+void ClosePrintSpoolFile();
 void SetSerialParams(unsigned char);
 void SetMonState(BOOL);
 unsigned char VDG_Mode();
@@ -40,7 +41,7 @@ unsigned int DACState();
 unsigned int GetDACSample();
 unsigned char GetCasSample();
 void SetCassetteSample(unsigned char);
-int OpenPrintFile(const char *);
+bool OpenPrintSpoolFile(const std::filesystem::path& path);
 // FIXME: These need to be turned into an enum and the signature of functions
 // that use them updated.
 constexpr auto FALLING	= 0u;

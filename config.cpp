@@ -40,7 +40,8 @@ This file is part of VCC (Virtual Color Computer).
 #include "keyboard.h"
 #include "keyboardEdit.h"
 #include "vcc/utils/FileOps.h"
-#include "vcc/common/DialogOps.h"
+#include <vcc/ui/select_file_dialog.h>
+#include <vcc/utils/persistent_value_section_store.h>
 #include "Cassette.h"
 #include "CommandLine.h"
 #include "vcc/utils/logger.h"
@@ -52,7 +53,7 @@ using namespace VCC;
 /*        Local Function Templates          */
 /********************************************/
 
-int SelectFile(char *);
+std::filesystem::path SelectPrintSpoolFile();
 void RefreshJoystickStatus();
 unsigned char TranslateDisp2Scan(int);
 unsigned char TranslateScan2Disp(int);
@@ -113,9 +114,7 @@ static unsigned char temp=0,temp2=0;
 static char IniFileName[]="DREAM.ini";
 static char IniFilePath[MAX_PATH]="";
 static char KeyMapFilePath[MAX_PATH]="";
-static char TapeFileName[MAX_PATH]="";
 static char ExecDirectory[MAX_PATH]="";
-static char SerialCaptureFile[MAX_PATH]="";
 static unsigned char NumberofJoysticks=0;
 TCHAR AppDataPath[MAX_PATH];
 
@@ -622,14 +621,19 @@ LRESULT CALLBACK CpuConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPar
 						SendDlgItemMessage(hDlg,IDC_OVERCLOCK,BM_GETCHECK,0,0);
 			break;
 		case IDC_BROWSE: {
-				FileDialog dlg;
-				dlg.setInitialDir(ExecDirectory);
-				dlg.setFilter("Rom Image\0*.rom\0\0");
-				dlg.setTitle("Coco3 Rom Image");
-				dlg.setFlags(OFN_FILEMUSTEXIST);
-				if (dlg.show()) {
-					dlg.getpath(tmpcfg.ExtRomFile,MAX_PATH);
-					SetDlgItemText(hDlg,IDC_ROMPATH,tmpcfg.ExtRomFile);
+				::vcc::ui::select_file_dialog select_dialog;
+				select_dialog
+					.set_title("Select Color Computer BASIC ROM Image")
+					.set_initial_directory(ExecDirectory)
+					.set_selection_filter({ { "ROM Image", {"*.rom"} } })
+					.append_flags(OFN_FILEMUSTEXIST);
+				if (select_dialog.do_modal_load_dialog(hDlg)) {
+					strcpy_s(
+						tmpcfg.ExtRomFile,
+						sizeof(tmpcfg.ExtRomFile),
+						select_dialog.selected_path().string().c_str());
+					
+					SetDlgItemText(hDlg, IDC_ROMPATH, tmpcfg.ExtRomFile);
 				}
 			}
 			break;
@@ -714,8 +718,12 @@ LRESULT CALLBACK TapeConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPa
 		sprintf(OutBuffer,"%i",TapeCounter);
 		SendDlgItemMessage(hDlg,IDC_TCOUNT,WM_SETTEXT,0,(LPARAM)(LPCSTR)OutBuffer);
 		SendDlgItemMessage(hDlg,IDC_MODE,WM_SETTEXT,0,(LPARAM)(LPCSTR)Tmodes[Tmode]);
-		GetTapeName(TapeFileName);  // Defined in Cassette.cpp
-		SendDlgItemMessage(hDlg,IDC_TAPEFILE,WM_SETTEXT,0,(LPARAM)(LPCSTR)TapeFileName);
+		SendDlgItemMessage(
+			hDlg,
+			IDC_TAPEFILE,
+			WM_SETTEXT,
+			0,
+			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(GetTapeName().filename().string().c_str())));
 		SendDlgItemMessage(hDlg,IDC_TCOUNT,EM_SETBKGNDCOLOR ,0,(LPARAM)RGB(0,0,0));
 		SendDlgItemMessage(hDlg,IDC_TCOUNT,EM_SETCHARFORMAT ,SCF_ALL,(LPARAM)&CounterText);
 		SendDlgItemMessage(hDlg,IDC_MODE,EM_SETBKGNDCOLOR ,0,(LPARAM)RGB(0,0,0));
@@ -780,10 +788,13 @@ void UpdateTapeCounter(unsigned int Counter,unsigned char TapeMode, bool forced)
 		Tmode = TapeMode;
 		SendDlgItemMessage(hTapeDlg, IDC_MODE,
 			WM_SETTEXT, 0, (LPARAM)(LPCSTR)Tmodes[Tmode]);
-		GetTapeName(TapeFileName);
-		PathStripPath(TapeFileName);
-		SendDlgItemMessage(hTapeDlg, IDC_TAPEFILE,
-			WM_SETTEXT, 0, (LPARAM)(LPCSTR)TapeFileName);
+
+		SendDlgItemMessage(
+			hTapeDlg,
+			IDC_TAPEFILE,
+			WM_SETTEXT,
+			0,
+			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(GetTapeName().filename().string().c_str())));
 
 		switch (Tmode) {
 			case REC:
@@ -1056,7 +1067,7 @@ LRESULT CALLBACK DisplayConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*
 /********************************************/
 
 int SetCurrentKeyMap(int keymap);
-int SelectKeymapFile(HWND hdlg);
+void SelectKeymapFile(HWND hdlg);
 int ShowKeymapStatus(HWND hDlg);
 
 HWND hInputDlg = nullptr;
@@ -1146,35 +1157,47 @@ int ShowKeymapStatus(HWND hDlg)
     return 0;
 }
 
-BOOL SelectKeymapFile(HWND hDlg)
+void SelectKeymapFile(HWND hDlg)
 {
-	FileDialog dlg;
-	dlg.setFilter("Keymap Files\0*.keymap\0\0");
-	dlg.setInitialDir(AppDirectory());
-	dlg.setTitle(TEXT("Select Keymap file"));
-	dlg.setFlags(OFN_PATHMUSTEXIST);
-	dlg.setDefExt(".keymap");
-	if ( dlg.show() ) {
-		// Load keymap if file exists
-		DWORD attr = GetFileAttributesA(dlg.path());
-		if ( (attr != INVALID_FILE_ATTRIBUTES) &&
-				!(attr & FILE_ATTRIBUTE_DIRECTORY) ) {
-			LoadCustomKeyMap(dlg.path());
-		// Else create new file from current selection
-		} else {
-			char txt[MAX_PATH+32];
-			strcpy (txt,"Create ");
-			strcat (txt,dlg.path());
-			strcat (txt,"?");
-			if (MessageBox(hDlg,txt,"Warning",MB_YESNO)==IDYES) {
-				CloneStandardKeymap(CurrentConfig.KeyMap);
-				SaveCustomKeyMap(dlg.path());
+	::vcc::ui::select_file_dialog select_dialog;
+
+	select_dialog
+		.set_title("Select Keymap file")
+		.set_selection_filter({ {"Keymap Files", {"*.keymap"} } })
+		.set_initial_directory(AppDirectory())
+		.append_flags(OFN_PATHMUSTEXIST)
+		.set_default_extension(".keymap");
+	if (select_dialog.do_modal_load_dialog(hDlg))
+	{
+		const auto& selected_path(select_dialog.selected_path());
+		if (std::filesystem::exists(selected_path))
+		{
+			// FIXME-CHET: The LoadCustomKeyMap may show a dialog if an
+			// error occurs. This should be handled better.
+			if(LoadCustomKeyMap(selected_path.string().c_str()) == 0)
+			{
+				SetKeyMapFilePath(selected_path.string().c_str());
+			}
+
+			return;
+		}
+
+		// The file does not exist, check and create one if necessary.
+		const auto message_text(std::format(
+			"The keymap file `{}` does not exist.\n\nWould you like to create it?",
+			selected_path.filename().string()));
+		if (MessageBox(hDlg, message_text.c_str(), "File Not Found", MB_ICONQUESTION | MB_YESNO) == IDYES)
+		{
+			CloneStandardKeymap(CurrentConfig.KeyMap);
+
+			// FIXME-CHET: The SaveCustomKeyMap will show a dialog if an
+			// error occurs. This should be handled better.
+			if (SaveCustomKeyMap(selected_path.string().c_str()) == 0)
+			{
+				SetKeyMapFilePath(selected_path.string().c_str());
 			}
 		}
-		dlg.getpath(KeyMapFilePath,MAX_PATH);
-		SetKeyMapFilePath(KeyMapFilePath); // Save filename in Vcc.config
 	}
-	return TRUE;
 }
 
 // Called by Keyboard.c and KeyboardEdit.c
@@ -1504,12 +1527,17 @@ void OpenBitBangerConfig() {
 }
 LRESULT CALLBACK BitBanger(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/)
 {
+	static const char no_capture_file_selected_text[]("No spool file selected");
+
 	switch (message) {
 	case WM_INITDIALOG: //IDC_PRINTMON
-		if (!strlen(SerialCaptureFile))
-			strcpy(SerialCaptureFile,"No Capture File");
-		SendDlgItemMessage(hDlg,IDC_SERIALFILE,
-			WM_SETTEXT,0,(LPARAM)(LPCSTR)SerialCaptureFile);
+		SendDlgItemMessage(
+			hDlg,
+			IDC_SERIALFILE,
+			WM_SETTEXT,
+			0,
+			reinterpret_cast<LPARAM>(static_cast<LPCSTR>(no_capture_file_selected_text)));
+
 		SendDlgItemMessage(hDlg,IDC_LF,BM_SETCHECK,TextMode,0);
 		SendDlgItemMessage(hDlg,IDC_PRINTMON,BM_SETCHECK,PrtMon,0);
 		SetSerialParams(TextMode);
@@ -1533,16 +1561,26 @@ LRESULT CALLBACK BitBanger(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lPar
 			break;
 
 		case IDC_OPEN:
-			SelectFile(SerialCaptureFile);
-			SendDlgItemMessage(hDlg,IDC_SERIALFILE,
-					WM_SETTEXT,0,(LPARAM)(LPCSTR)SerialCaptureFile);
+			if (const auto selected_path(SelectPrintSpoolFile());
+				!selected_path.empty())
+			{
+				SendDlgItemMessage(
+					hDlg,
+					IDC_SERIALFILE,
+					WM_SETTEXT,
+					0,
+					reinterpret_cast<LPARAM>(static_cast<LPCSTR>(selected_path.string().c_str())));
+			}
 			break;
 
 		case IDC_CLOSE:
-			ClosePrintFile();
-			strcpy(SerialCaptureFile,"No Capture File");
-			SendDlgItemMessage(hDlg,IDC_SERIALFILE,
-					WM_SETTEXT,0,(LPARAM)(LPCSTR)SerialCaptureFile);
+			ClosePrintSpoolFile();
+			SendDlgItemMessage(
+				hDlg,
+				IDC_SERIALFILE,
+				WM_SETTEXT,
+				0,
+				reinterpret_cast<LPARAM>(static_cast<LPCSTR>(no_capture_file_selected_text)));
 			PrtMon=FALSE;
 			SetMonState(PrtMon);
 			SendDlgItemMessage(hDlg,IDC_PRINTMON,BM_SETCHECK,PrtMon,0);
@@ -1574,33 +1612,39 @@ LRESULT CALLBACK Paths(HWND /*hDlg*/, UINT /*message*/, WPARAM /*wParam*/, LPARA
 /********************************************/
 /*             Select Capture File          */
 /********************************************/
-int SelectFile(char *FileName)
+std::filesystem::path SelectPrintSpoolFile()
 {
-	char CapFilePath[MAX_PATH];
-	GetPrivateProfileString
-		("DefaultPaths", "CapFilePath", "", CapFilePath, MAX_PATH, IniFilePath);
+	const auto capture_file_path_key("CapFilePath");
+	const ::vcc::utils::persistent_value_section_store value_store(
+		GetIniFilePath(),
+		"DefaultPaths");
 
-	FileDialog dlg;
-	dlg.setTitle("Open print capture file");
-	dlg.setFilter("Text File\0*.txt\0\0");
-	dlg.setInitialDir(CapFilePath);
-	dlg.setDefExt("txt");
-	dlg.setFlags(OFN_OVERWRITEPROMPT);
+	::vcc::ui::select_file_dialog select_dialog;
 
-	if (dlg.show(1)) {     // use save dialog
-		ClosePrintFile();
-		if (OpenPrintFile(dlg.path())) {
-			dlg.getdir(CapFilePath);
-			if (strcmp(CapFilePath,"") != 0) {
-				WritePrivateProfileString
-					("DefaultPaths", "CapFilePath", CapFilePath, IniFilePath);
-			}
-		} else {
-			MessageBox(EmuState.WindowHandle,"Can't open file.","Error",0);
-		}
+	select_dialog
+		.set_title("Open Print Spooler Capture File")
+		.set_selection_filter({ {"Text File", {"*.txt"} } })
+		.set_initial_directory(value_store.read(capture_file_path_key))
+		.set_default_extension("txt")
+		.append_flags(OFN_OVERWRITEPROMPT);
+
+	if (!select_dialog.do_modal_save_dialog())
+	{
+		return {};
 	}
-	dlg.getpath(FileName);
-	return 1;
+
+	const auto selected_file(select_dialog.selected_path());
+
+	ClosePrintSpoolFile();
+	if (!OpenPrintSpoolFile(selected_file))
+	{
+		MessageBox(EmuState.WindowHandle, "Can't open file.", "Error", 0);
+		return {};
+	}
+
+	value_store.write(capture_file_path_key, selected_file.parent_path());
+
+	return selected_file;
 }
 
 /**********************************/

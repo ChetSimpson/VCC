@@ -98,16 +98,19 @@ namespace vcc::ui
 		/// @brief Retrieve the path selected by the user.
 		/// 
 		/// Retrieve the last path selected by the user. The selected path is only
-		/// saved if the user selects "OK". IF the user cancels the file dialog no
-		/// path is saved.
+		/// saved if the user selects "OK". If the user cancels the file dialog the
+		/// returned path is empty.
 		/// 
-		/// @return The path selected by the user.
+		/// @return The path selected by the user or an empty path if the operation
+		/// was canceled.
 		[[nodiscard]] LIBCOMMON_EXPORT path_type selected_path() const;
 
 		/// @brief Creates and shows a _Save_ dialog
 		/// 
 		/// Creates a _Save_ dialog box that lets the user specify the drive, directory,
-		/// and name of a file to save.
+		/// and name of a file to save. Before the dialog is presented to the user the
+		/// last selected path is erased. If the user selects a new path, the last
+		/// selected path will be set, otherwise it is left empty.
 		/// 
 		/// @param dialog_owner An optional handle to the parent window the file
 		/// selection dialog.
@@ -118,7 +121,9 @@ namespace vcc::ui
 		/// @brief Creates and shows an _Open_ dialog.
 		/// 
 		/// Creates an _Open_ dialog box that lets the user specify the drive, directory,
-		/// and the name of a file or set of files to be opened.
+		/// and the name of a file or set of files to be opened. Before the dialog is
+		/// presented to the user the last selected path is erased. If the user selects a
+		/// new path, the last selected path will be set, otherwise it is left empty.
 		/// 
 		/// @param dialog_owner An optional handle to the parent window the file
 		/// selection dialog.

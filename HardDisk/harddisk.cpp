@@ -26,7 +26,7 @@
 #include "vcc/ui/menu/menu_builder.h"
 #include "vcc/devices/rtc/ds1315.h"
 #include "vcc/utils/FileOps.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "vcc/utils/winapi.h"
 
 constexpr auto DEF_HD_SIZE = 132480u;
@@ -91,7 +91,7 @@ void vcc_hard_disk_cartridge::start()
 
 void vcc_hard_disk_cartridge::stop()
 {
-	CloseCartDialog(hConfDlg);
+	::vcc::ui::close_cartridge_dialog_window(hConfDlg);
 	UnmountHD(0);
 	UnmountHD(1);
 }
@@ -137,7 +137,7 @@ LRESULT CALLBACK Config(HWND hDlg, UINT message, WPARAM wParam, LPARAM /*lParam*
         return TRUE;
 
     case WM_INITDIALOG:
-        CenterDialog(hDlg);
+		::vcc::ui::center_window_to_parent(hDlg);
 		SendDlgItemMessage(hDlg, IDC_CLOCK, BM_SETCHECK, ClockEnabled, 0);
 		SendDlgItemMessage(hDlg, IDC_READONLY, BM_SETCHECK, ClockReadOnly, 0);
         EnableWindow(GetDlgItem(hDlg, IDC_CLOCK), TRUE);
@@ -189,8 +189,22 @@ vcc_hard_disk_cartridge::status_type vcc_hard_disk_cartridge::status() const
 
 
 // Get filename from user and mount harddrive
-void LoadHardDisk(int drive)
+void LoadHardDisk([[maybe_unused]] int drive)
 {
+	// TODO-CHET: Since the hard disk controller cartridge is currently not used and is
+	// pending rework/refactor, the updates to selecting and mounting disk images,
+	// associated UI, and other logic will be deferred until that time.
+	HWND hWnd = GetActiveWindow();
+	MessageBox(
+		hWnd,
+		"The hard disk cartridge feature is not currently available.\n"
+		"This functionality will be restored in a future version.",
+		"Hard Disk Cartridge",
+		MB_OK | MB_ICONINFORMATION
+	);
+	return;
+
+#if 0
     char msg[300];
 
     // Select VHD FileName buffer as per drive
@@ -206,7 +220,7 @@ void LoadHardDisk(int drive)
     }
 
     HWND hWnd = GetActiveWindow();
-    FileDialog dlg;
+	vcc::ui::select_file_dialog dlg;
     dlg.setpath(VHDfile);
     dlg.setFilter("Hard Disk Images\0*.vhd;*.os9;*.img\0All files\0*.*\0\0");
     dlg.setDefExt("vhd");
@@ -237,7 +251,7 @@ void LoadHardDisk(int drive)
         dlg.getdir(HardDiskPath);
         SaveConfig();
     }
-    return;
+#endif
 }
 
 // Get configuration items from ini file

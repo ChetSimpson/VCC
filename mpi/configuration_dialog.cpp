@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "configuration_dialog.h"
 #include "resource.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "vcc/utils/filesystem.h"
 #include <array>
 #include <format>
@@ -102,7 +102,7 @@ namespace vcc::cartridges::multipak
 
 	void configuration_dialog::close()
 	{
-		CloseCartDialog(dialog_handle_);
+		::vcc::ui::close_cartridge_dialog_window(dialog_handle_);
 	}
 
 
@@ -206,7 +206,7 @@ namespace vcc::cartridges::multipak
 
 		case WM_INITDIALOG:
 			dialog_handle_ = hDlg;
-			CenterDialog(hDlg);
+			::vcc::ui::center_window_to_parent(hDlg);
 			for (slot_id_type slot(0); slot < gSlotUiElementIds.size(); slot++)
 			{
 				update_slot_details(slot);

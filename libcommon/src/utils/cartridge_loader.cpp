@@ -22,7 +22,6 @@
 #include "vcc/utils/cartridge_loader.h"
 #include "vcc/utils/winapi.h"
 #include "vcc/utils/filesystem.h"
-#include "vcc/common/DialogOps.h"
 #include <vector>
 #include <fstream>
 #include <iterator>

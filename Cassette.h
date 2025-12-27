@@ -17,6 +17,7 @@ This file is part of VCC (Virtual Color Computer).
     You should have received a copy of the GNU General Public License
     along with VCC (Virtual Color Computer).  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <filesystem>
 
 constexpr auto STOP		= 0u;
 constexpr auto PLAY		= 1u;
@@ -31,15 +32,14 @@ constexpr auto CAS_SILENCE = 128u;
 constexpr auto CAS_TAPEAUDIORATE = 44100u;
 
 unsigned int GetTapeCounter();
-unsigned int LoadTape();
+bool LoadTape();
 void SetTapeCounter(unsigned int, bool force = false);
 void SetTapeMode(unsigned char);
 void Motor(unsigned char);
 void LoadCassetteBuffer(unsigned char *, unsigned int* CassBufferSize);
 void FlushCassetteBuffer(const unsigned char *,unsigned int *);
-void GetTapeName(char *);
+std::filesystem::path GetTapeName();
 void UpdateTapeStatus(char* status, int max);
-uint8_t CassInBitStream();
 
 unsigned int GetTapeRate();
 unsigned char GetMotorState();

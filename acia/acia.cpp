@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "acia.h"
 #include "vcc/ui/menu/menu_builder.h"
-#include "vcc/common/DialogOps.h"
+#include "vcc/ui/utility.h"
 #include "vcc/utils/logger.h"
 #include "vcc/utils/winapi.h"
 
@@ -93,7 +93,7 @@ void rs232pak_cartridge::start()
 
 void rs232pak_cartridge::stop()
 {
-	CloseCartDialog(g_hDlg);
+	::vcc::ui::close_cartridge_dialog_window(g_hDlg);
 	sc6551_close();
 	AciaStat[0]='\0';
 }
@@ -287,7 +287,7 @@ LRESULT CALLBACK Config(HWND hDlg,UINT msg,WPARAM wParam,LPARAM /*lParam*/)
         DestroyWindow(g_hDlg);
         g_hDlg = hDlg;
 
-        CenterDialog(hDlg);
+		::vcc::ui::center_window_to_parent(hDlg);
 
         // Set Button as per Base Port
         switch (AciaBasePort) {
