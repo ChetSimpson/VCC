@@ -48,7 +48,7 @@ namespace vcc::ui
 			{
 				MessageBox(
 					nullptr,
-					"A system dialog was left open. VCC will close",
+					"A system dialog was left open. VCC will close.",
 					"Unload Cartridge Error",
 					MB_ICONEXCLAMATION);
 				DWORD pid = GetCurrentProcessId();
