@@ -312,7 +312,7 @@ void SaveConfig()
 		value_store.write("HardDiskPath", HardDiskPath);
     }
 
-	value_store.write("VHDImage",VHDfile0.relative_path() );
+	value_store.write("VHDImage", VHDfile0);
     value_store.write("VHDImage1",VHDfile1 );
 	value_store.write("ClkEnable", ClockEnabled);
 	value_store.write("ClkRdOnly", ClockReadOnly);
