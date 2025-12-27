@@ -25,18 +25,19 @@
 #include "cc3vhd.h"
 #include "vcc/ui/menu/menu_builder.h"
 #include "vcc/devices/rtc/ds1315.h"
+#include "vcc/utils/persistent_value_section_store.h"
 #include "vcc/utils/FileOps.h"
 #include "vcc/ui/utility.h"
 #include "vcc/utils/winapi.h"
 
 constexpr auto DEF_HD_SIZE = 132480u;
 
-static char VHDfile0[MAX_PATH] { 0 };
-static char VHDfile1[MAX_PATH] { 0 };
+static std::filesystem::path VHDfile0;
+static std::filesystem::path VHDfile1;
 static char *VHDfile; // Selected drive file name
 static char NewVHDfile[MAX_PATH];
 static char IniFile[MAX_PATH]  { 0 };
-static char HardDiskPath[MAX_PATH];
+static std::filesystem::path HardDiskPath;
 static ::vcc::devices::rtc::ds1315 ds1315_rtc;
 static const char* const gConfigurationSection = "Hard Drive";
 
@@ -106,7 +107,7 @@ void vcc_hard_disk_cartridge::menu_item_clicked(menu_item_id_type MenuID)
 
     case 11:
         UnmountHD(0);
-        *VHDfile0 = '\0';
+		VHDfile0.clear();
         break;
 
     case 12:
@@ -115,7 +116,7 @@ void vcc_hard_disk_cartridge::menu_item_clicked(menu_item_id_type MenuID)
 
     case 13:
         UnmountHD(1);
-        *VHDfile1 = '\0';
+		VHDfile1.clear();
         break;
 
     case 14:
@@ -257,80 +258,80 @@ void LoadHardDisk([[maybe_unused]] int drive)
 // Get configuration items from ini file
 void vcc_hard_disk_cartridge::LoadConfig()
 {
-    HANDLE hr;
+	::vcc::utils::persistent_value_section_store value_store(IniFile, gConfigurationSection);
 
-    GetPrivateProfileString("DefaultPaths", "HardDiskPath", "",
-                             HardDiskPath, MAX_PATH, IniFile);
+	// TODO-CHET: HardDiskPath was originally stored in the global settings section. This should
+	// be added back once the hard disk cartridge is reworked/refactored and the host interface
+	// is updated to provide additional settings services.
+	HardDiskPath = value_store.read("HardDiskPath");
+	VHDfile0 = value_store.read("VHDImage");
+	VHDfile1 = value_store.read("VHDImage1");
+	ClockEnabled = value_store.read("ClkEnable", true);
+	ClockReadOnly = value_store.read("ClkRdOnly", true);
+	
+	// Verify HD0 image file exists and mount it.
+	if (std::filesystem::exists(VHDfile0))
+	{
+		MountHD(VHDfile0.string().c_str(), 0);
+	}
+	else
+	{
+		VHDfile0.clear();
+		value_store.remove("VHDImage");
+	}
+	
+	// Verify HD1 image file exists and mount it.
+	if (std::filesystem::exists(VHDfile1))
+	{
+		MountHD(VHDfile1.string().c_str(), 1);
+	}
+	else
+	{
+		VHDfile1.clear();
+		value_store.remove("VHDImage1");
+	}
 
-    // Verify HD0 image file exists and mount it.
-    GetPrivateProfileString(gConfigurationSection,"VHDImage" ,"",VHDfile0,MAX_PATH,IniFile);
-    hr = CreateFile (VHDfile0,0,FILE_SHARE_READ,nullptr,
-                     OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
-    if (hr==INVALID_HANDLE_VALUE) {
-        strcpy(VHDfile0,"");
-        WritePrivateProfileString(gConfigurationSection,"VHDImage","",IniFile);
-    } else {
-        CloseHandle(hr);
-        MountHD(VHDfile0,0);
-    }
-
-    // Verify HD1 image file exists and mount it.
-    GetPrivateProfileString(gConfigurationSection,"VHDImage1","",VHDfile1,MAX_PATH,IniFile);
-    hr = CreateFile (VHDfile1,0,FILE_SHARE_READ,nullptr,
-                     OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
-    if (hr==INVALID_HANDLE_VALUE) {
-        strcpy(VHDfile1,"");
-        WritePrivateProfileString(gConfigurationSection,"VHDImage1","",IniFile);
-    } else {
-        CloseHandle(hr);
-        MountHD(VHDfile1,1);
-    }
-
-	ClockEnabled = GetPrivateProfileInt(gConfigurationSection, "ClkEnable", 1, IniFile) != 0;
-	ClockReadOnly = GetPrivateProfileInt(gConfigurationSection, "ClkRdOnly", 1, IniFile) != 0;
 }
 
 // Save config saves the hard disk path and vhd file names
 void SaveConfig()
 {
-    ValidatePath(VHDfile0);
-    ValidatePath(VHDfile1);
-    if (strcmp(HardDiskPath, "") != 0) {
-        WritePrivateProfileString
-            ("DefaultPaths", "HardDiskPath", HardDiskPath, IniFile);
+	::vcc::utils::persistent_value_section_store value_store(IniFile, gConfigurationSection);
+	
+	// TODO-CHET: The originally this used the ValidatePath function to try and change the path
+	// to something relative to the main application path. This was likely used for installing
+	// from a zip file onto a USB drive (i.e. mobility). This functionality is currently deferred
+	// until the hard disk cartridge is reworked/refactored and the host interface is updated to
+	// provide additional settings and path services.
+
+	if (!HardDiskPath.empty())
+	{
+		// TODO-CHET: HardDiskPath was originally stored in the global settings section. This should
+		// be added back once the hard disk cartridge is reworked/refactored and the host interface
+		// is updated to provide additional settings services.
+		value_store.write("HardDiskPath", HardDiskPath);
     }
-    WritePrivateProfileString(gConfigurationSection,"VHDImage",VHDfile0 ,IniFile);
-    WritePrivateProfileString(gConfigurationSection,"VHDImage1",VHDfile1 ,IniFile);
-	WritePrivateProfileInt(gConfigurationSection, "ClkEnable", ClockEnabled, IniFile);
-	WritePrivateProfileInt(gConfigurationSection, "ClkRdOnly", ClockReadOnly, IniFile);
-    return;
+
+	value_store.write("VHDImage",VHDfile0.relative_path() );
+    value_store.write("VHDImage1",VHDfile1 );
+	value_store.write("ClkEnable", ClockEnabled);
+	value_store.write("ClkRdOnly", ClockReadOnly);
 }
 
 // Generate menu for mounting the drives
 vcc_hard_disk_cartridge::menu_item_collection_type vcc_hard_disk_cartridge::get_menu_items() const
 {
-	char TempMsg[512] = "";
-	char TempBuf[MAX_PATH] = "";
-
 	::vcc::ui::menu::menu_builder builder;
 
-	strcpy(TempMsg, "Eject: ");
-	strcpy(TempBuf, VHDfile0);
-	PathStripPath(TempBuf);
-	strcat(TempMsg, TempBuf);
 	builder
 		.add_root_submenu("HD Drive 0")
 		.add_submenu_item(10, "Insert")
-		.add_submenu_item(11, TempMsg);
+		.add_submenu_item(11, "Eject " + VHDfile0.filename().string());
 
-	strcpy(TempMsg, "Eject: ");
-	strcpy(TempBuf, VHDfile1);
-	PathStripPath(TempBuf);
-	strcat(TempMsg, TempBuf);
 	builder
 		.add_root_submenu("HD Drive 1")
 		.add_submenu_item(12, "Insert")
-		.add_submenu_item(13, TempMsg);
+		.add_submenu_item(11, "Eject " + VHDfile1.filename().string());
 
 	builder.add_root_item(14, "HD Config");
 
