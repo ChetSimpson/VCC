@@ -181,9 +181,11 @@ void LoadConfig(SystemState *LCState)
 	buildTransDisp2ScanTable();
 
 	LoadString(nullptr, IDS_APP_TITLE,AppName, MAX_LOADSTRING);
-	strcpy(
-		ExecDirectory,
-		std::filesystem::path(::vcc::utils::get_module_path(nullptr)).parent_path().string().c_str());
+	{
+		std::string execDirStr =
+			std::filesystem::path(::vcc::utils::get_module_path(nullptr)).parent_path().string();
+		strncpy_s(ExecDirectory, sizeof(ExecDirectory), execDirStr.c_str(), _TRUNCATE);
+	}
 	if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_APPDATA, nullptr, 0, AppDataPath)))
 		OutputDebugString(AppDataPath);
 	strcpy(CurrentConfig.PathtoExe,ExecDirectory);
