@@ -63,7 +63,7 @@ unsigned char QuickLoad(const std::filesystem::path& BinFileName)
 		extension.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 
-	if (extension == ".rom" || extension == ".ccc" || extension == "*.pak")
+	if (extension == ".rom" || extension == ".ccc" || extension == ".pak")
 	{
 		PakInsertRom(BinFileName);
 		// FIXME-CHET: Report errors
