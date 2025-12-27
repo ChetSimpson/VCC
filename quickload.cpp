@@ -23,7 +23,6 @@ This file is part of VCC (Virtual Color Computer).
 #include "Vcc.h"
 #include "coco3.h"
 #include "tcc1014mmu.h"
-#include "vcc/utils/FileOps.h"
 
 
 static unsigned char FileType=0;
@@ -32,23 +31,23 @@ static  short StartAddress=0;
 static unsigned short XferAddress=0;
 static unsigned char *MemImage=nullptr;
 static FILE *BinImage=nullptr;
-static HANDLE hr;
 static unsigned char Flag=1;
 static int temp=255;
-static char Extension[MAX_PATH]="";
 
-unsigned char QuickLoad(char *BinFileName)
+unsigned char QuickLoad(const std::filesystem::path& BinFileName)
 {
 	unsigned int MemIndex=0;
 
-	hr=CreateFile(BinFileName,0,FILE_SHARE_READ,nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
-	if (hr==INVALID_HANDLE_VALUE)
+	if (!std::filesystem::exists(BinFileName))
+	{
 		return 1;				//File Not Found
+	}
 
-	CloseHandle(hr);
-	BinImage=fopen(BinFileName,"rb");
-	if (BinImage==nullptr)
+	BinImage=_wfopen(BinFileName.c_str(), L"rb");
+	if (BinImage == nullptr)
+	{
 		return 2;				//Can't Open File
+	}
 			
 	MemImage=(unsigned char *)malloc(65535);
 	if (MemImage==nullptr)
@@ -56,15 +55,21 @@ unsigned char QuickLoad(char *BinFileName)
 		MessageBox(nullptr,"Can't alocate ram","Error",0);
 		return 3;				//Not enough memory
 	}
-	strcpy(Extension,PathFindExtension(BinFileName));
-	_strlwr(Extension);
-	if ( (strcmp(Extension,".rom")==0) | (strcmp(Extension,".ccc")==0) | (strcmp(Extension,"*.pak")==0))
+
+	auto extension(BinFileName.extension().string());
+	std::transform(
+		extension.begin(),
+		extension.end(),
+		extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+
+	if (extension == ".rom" || extension == ".ccc" || extension == "*.pak")
 	{
 		PakInsertRom(BinFileName);
 		// FIXME-CHET: Report errors
 		return 0;
 	}
-	if ( strcmp(Extension,".bin")==0)
+	if (extension == ".bin")
 	{
 		while (true)
 		{

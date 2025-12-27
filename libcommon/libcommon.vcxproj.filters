@@ -147,9 +147,6 @@
     <ClCompile Include="src\devices\serial\beckerport.cpp">
       <Filter>Source Files\devices\serial</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Fileops.cpp">
-      <Filter>Source Files\utils</Filter>
-    </ClCompile>
     <ClCompile Include="src\utils\logger.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
@@ -265,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="include\vcc\devices\serial\beckerport.h">
       <Filter>Header Files\devices\serial</Filter>
-    </ClInclude>
-    <ClInclude Include="include\vcc\utils\FileOps.h">
-      <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="include\vcc\utils\logger.h">
       <Filter>Header Files\utils</Filter>

@@ -39,7 +39,7 @@ This file is part of VCC (Virtual Color Computer).
 #include "joystickinput.h"
 #include "keyboard.h"
 #include "keyboardEdit.h"
-#include "vcc/utils/FileOps.h"
+#include <vcc/utils/filesystem.h>
 #include <vcc/ui/select_file_dialog.h>
 #include <vcc/utils/persistent_value_section_store.h>
 #include "Cassette.h"
@@ -48,6 +48,24 @@ This file is part of VCC (Virtual Color Computer).
 
 using namespace std;
 using namespace VCC;
+
+namespace
+{
+
+	DWORD WritePrivateProfileInt(
+		LPCTSTR SectionName,
+		LPCTSTR KeyName,
+		int KeyValue,
+		LPCTSTR IniFileName)
+	{
+		char Buffer[32] = "";
+		sprintf(Buffer, "%i", KeyValue);
+
+		return WritePrivateProfileString(SectionName, KeyName, Buffer, IniFileName);
+	}
+
+}
+
 
 /********************************************/
 /*        Local Function Templates          */
@@ -163,8 +181,9 @@ void LoadConfig(SystemState *LCState)
 	buildTransDisp2ScanTable();
 
 	LoadString(nullptr, IDS_APP_TITLE,AppName, MAX_LOADSTRING);
-	GetModuleFileName(nullptr,ExecDirectory,MAX_PATH);
-	PathRemoveFileSpec(ExecDirectory);
+	strcpy(
+		ExecDirectory,
+		std::filesystem::path(::vcc::utils::get_module_path(nullptr)).parent_path().string().c_str());
 	if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_APPDATA, nullptr, 0, AppDataPath)))
 		OutputDebugString(AppDataPath);
 	strcpy(CurrentConfig.PathtoExe,ExecDirectory);
