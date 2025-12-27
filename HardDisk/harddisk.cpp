@@ -298,7 +298,7 @@ void SaveConfig()
 {
 	::vcc::utils::persistent_value_section_store value_store(IniFile, gConfigurationSection);
 	
-	// TODO-CHET: The originally this used the ValidatePath function to try and change the path
+	// TODO-CHET: Originally this used the ValidatePath function to try and change the path
 	// to something relative to the main application path. This was likely used for installing
 	// from a zip file onto a USB drive (i.e. mobility). This functionality is currently deferred
 	// until the hard disk cartridge is reworked/refactored and the host interface is updated to
