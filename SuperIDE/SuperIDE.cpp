@@ -21,7 +21,6 @@
 #include "vcc/devices/rtc/ds1315.h"
 #include "vcc/ui/menu/menu_builder.h"
 #include "vcc/utils/persistent_value_section_store.h"
-#include "vcc/utils/FileOps.h"
 #include "vcc/ui/utility.h"
 #include "vcc/utils/winapi.h"
 #include <Windows.h>

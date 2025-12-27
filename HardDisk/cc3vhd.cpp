@@ -55,7 +55,6 @@ This file is part of VCC (Virtual Color Computer).
 #include <stdio.h>
 #include "cc3vhd.h"
 #include "harddisk.h"
-#include "vcc/utils/FileOps.h"
 
 // FIXME-CHET: The usage of this type results in undefined behavior. Replace.
 typedef union {

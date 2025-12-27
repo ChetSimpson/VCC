@@ -43,7 +43,6 @@ This file is part of VCC (Virtual Color Computer).
 #include <stdio.h>
 #include <mmsystem.h>
 #include "vcc/ui/menu/menu_builder.h"
-#include "vcc/utils/FileOps.h"
 #include "vcc/ui/utility.h"
 #include "defines.h"
 #include "resource.h"

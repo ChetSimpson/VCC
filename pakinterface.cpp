@@ -28,7 +28,6 @@
 #include "vcc/utils/dll_deleter.h"
 #include "vcc/utils/winapi.h"
 #include "vcc/utils/logger.h"
-#include "vcc/utils/FileOps.h"
 #include "vcc/utils/filesystem.h"
 #include <fstream>
 #include <Windows.h>
