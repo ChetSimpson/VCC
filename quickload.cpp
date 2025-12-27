@@ -52,7 +52,7 @@ unsigned char QuickLoad(const std::filesystem::path& BinFileName)
 	MemImage=(unsigned char *)malloc(65535);
 	if (MemImage==nullptr)
 	{
-		MessageBox(nullptr,"Can't alocate ram","Error",0);
+		MessageBox(nullptr,"Can't allocate ram","Error",0);
 		return 3;				//Not enough memory
 	}
 
