@@ -323,5 +323,5 @@ void superide_cartridge::LoadConfig()
 
 	ds1315_rtc.set_read_only(ClockReadOnly);
 	MountDisk(value_store.read("Master").c_str(), MASTER);
-	MountDisk(value_store.read("Slave", "").c_str(), SLAVE);
+	MountDisk(value_store.read("Slave").c_str(), SLAVE);
 }
