@@ -41,9 +41,9 @@ namespace vcc::media::geometry_calculators
 
 		auto geometry(default_geometry());
 
-		geometry.head_count = head_count;
-		geometry.track_count = total_sectors / sectors_per_track;
-		geometry.sector_count = sectors_per_track;
+		geometry.head_count(head_count);
+		geometry.track_count(total_sectors / sectors_per_track);
+		geometry.sector_count(sectors_per_track);
 
 		return calculated_geometry_type{ 0u, geometry };
 	}

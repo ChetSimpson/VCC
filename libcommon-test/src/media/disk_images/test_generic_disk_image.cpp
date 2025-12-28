@@ -64,7 +64,7 @@ TEST_F(test_generic_disk_image, is_write_protected)
 TEST_F(test_generic_disk_image, is_valid_disk_head)
 {
 	geometry_type geometry;
-	geometry.head_count = *std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1;
+	geometry.head_count(*std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1);
 
 	for (const auto head : test_value_sequence_)
 	{
@@ -76,7 +76,7 @@ TEST_F(test_generic_disk_image, is_valid_disk_head)
 TEST_F(test_generic_disk_image, is_valid_disk_track)
 {
 	geometry_type geometry;
-	geometry.track_count = *std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1;
+	geometry.track_count(*std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1);
 
 	for (const auto track : test_value_sequence_)
 	{
@@ -90,11 +90,11 @@ TEST_F(test_generic_disk_image, head_count_property)
 	for (const auto head_count : test_value_sequence_)
 	{
 		geometry_type geometry;
-		geometry.head_count = head_count;
+		geometry.head_count(head_count);
 
 		EXPECT_EQ(
 			generic_disk_image(create_stream(buffer_stream_, geometry), geometry).head_count(),
-			geometry.head_count);
+			geometry.head_count());
 	}
 }
 
@@ -104,11 +104,11 @@ TEST_F(test_generic_disk_image, track_count_property)
 	for (const auto track_count : test_value_sequence_)
 	{
 		geometry_type geometry;
-		geometry.track_count = track_count;
+		geometry.track_count(track_count);
 
 		EXPECT_EQ(
 			generic_disk_image(create_stream(buffer_stream_, geometry), geometry).track_count(),
-			geometry.track_count);
+			geometry.track_count());
 	}
 }
 
@@ -118,11 +118,11 @@ TEST_F(test_generic_disk_image, sector_count_property)
 	for (const auto head_count : test_value_sequence_)
 	{
 		geometry_type geometry;
-		geometry.head_count = head_count;
+		geometry.head_count(head_count);
 
 		EXPECT_EQ(
 			generic_disk_image(create_stream(buffer_stream_, geometry), geometry).head_count(),
-			geometry.head_count);
+			geometry.head_count());
 	}
 }
 
@@ -166,7 +166,7 @@ TEST_F(test_generic_disk_image, get_sector_size)
 					head,
 					track,
 					sector),
-				geometry.sector_size);
+				geometry.sector_size());
 		});
 }
 
@@ -178,7 +178,7 @@ TEST_F(test_generic_disk_image, get_sector_size_throws_on_invalid_arguments)
 	// Pass invalid disk head
 	EXPECT_THROW(
 		(void)image.get_sector_size(
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // drive track
 			0, // head id
 			0, // track id
@@ -189,7 +189,7 @@ TEST_F(test_generic_disk_image, get_sector_size_throws_on_invalid_arguments)
 	EXPECT_THROW(
 		(void)image.get_sector_size(
 			0, // drive head
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			0, // head id
 			0, // track id
 			image.first_valid_sector_id()),
@@ -200,7 +200,7 @@ TEST_F(test_generic_disk_image, get_sector_size_throws_on_invalid_arguments)
 		(void)image.get_sector_size(
 			0, // drive head
 			0, // drive track
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // track id
 			image.first_valid_sector_id()),
 		std::invalid_argument);
@@ -211,7 +211,7 @@ TEST_F(test_generic_disk_image, get_sector_size_throws_on_invalid_arguments)
 			0, // drive head
 			0, // drive track
 			0, // head id
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			image.first_valid_sector_id()),
 		std::invalid_argument);
 
@@ -222,7 +222,7 @@ TEST_F(test_generic_disk_image, get_sector_size_throws_on_invalid_arguments)
 			0, // drive track
 			0, // head id
 			0, // track id
-			test_geometry_.sector_count + image.first_valid_sector_id()),
+			test_geometry_.sector_count() + image.first_valid_sector_id()),
 		std::invalid_argument);
 }
 
@@ -231,12 +231,12 @@ TEST_F(test_generic_disk_image, query_sector_header_by_index_returns_all_known_h
 {
 	generic_disk_image image(create_stream(buffer_stream_, test_geometry_), test_geometry_);
 
-	for (auto head(0u); head < test_geometry_.head_count; ++head)
+	for (auto head(0u); head < test_geometry_.head_count(); ++head)
 	{
-		for (auto track(0u); track < test_geometry_.track_count; ++track)
+		for (auto track(0u); track < test_geometry_.track_count(); ++track)
 		{
 			for (auto sector(image.first_valid_sector_id());
-				 sector < test_geometry_.sector_count + image.first_valid_sector_id();
+				 sector < test_geometry_.sector_count() + image.first_valid_sector_id();
 				 ++sector)
 			{
 				const auto record(image.query_sector_header_by_index(head, track, sector));
@@ -256,22 +256,22 @@ TEST_F(test_generic_disk_image, query_sector_header_by_index_throws_on_invalid_a
 	generic_disk_image image(create_stream(buffer_stream_, test_geometry_), test_geometry_);
 
 	EXPECT_THROW(
-		((void)image.query_sector_header_by_index(test_geometry_.head_count, 0, image.first_valid_sector_id())),
+		((void)image.query_sector_header_by_index(test_geometry_.head_count(), 0, image.first_valid_sector_id())),
 		std::invalid_argument);
 
 	EXPECT_THROW(
-		((void)image.query_sector_header_by_index(0, test_geometry_.track_count, image.first_valid_sector_id())),
+		((void)image.query_sector_header_by_index(0, test_geometry_.track_count(), image.first_valid_sector_id())),
 		std::invalid_argument);
 
 	EXPECT_GT(image.first_valid_sector_id(), 0u);
 	EXPECT_THROW(
-		((void)image.query_sector_header_by_index(0, test_geometry_.track_count, 0)),
+		((void)image.query_sector_header_by_index(0, test_geometry_.track_count(), 0)),
 		std::invalid_argument);
 	EXPECT_THROW(
 		((void)image.query_sector_header_by_index(
 			0,
 			0,
-			test_geometry_.sector_count + image.first_valid_sector_id() + 1)),
+			test_geometry_.sector_count() + image.first_valid_sector_id() + 1)),
 		std::invalid_argument);
 }
 
@@ -300,7 +300,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 	// Pass invalid disk head
 	ASSERT_EQ(
 		image.read_sector(
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // drive track
 			0, // head id
 			0, // track id
@@ -312,7 +312,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 	ASSERT_EQ(
 		image.read_sector(
 			0, // drive head
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			0, // head id
 			0, // track id
 			image.first_valid_sector_id(),
@@ -324,7 +324,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 		image.read_sector(
 			0, // drive head
 			0, // drive track
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
@@ -336,7 +336,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // drive head
 			0, // drive track
 			0, // head id
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			image.first_valid_sector_id(),
 			sector_buffer),
 		disk_error_id_type::invalid_track);
@@ -348,7 +348,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // drive track
 			0, // head id
 			0, // track id
-			test_geometry_.sector_count + image.first_valid_sector_id(),
+			test_geometry_.sector_count() + image.first_valid_sector_id(),
 			sector_buffer),
 		disk_error_id_type::invalid_sector);
 }
@@ -394,7 +394,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 	// Pass invalid disk head
 	ASSERT_EQ(
 		image.write_sector(
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // drive track
 			0, // head id
 			0, // track id
@@ -406,7 +406,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 	ASSERT_EQ(
 		image.write_sector(
 			0, // drive head
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			0, // head id
 			0, // track id
 			image.first_valid_sector_id(),
@@ -418,7 +418,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 		image.write_sector(
 			0, // drive head
 			0, // drive track
-			test_geometry_.head_count,
+			test_geometry_.head_count(),
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
@@ -430,7 +430,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // drive head
 			0, // drive track
 			0, // head id
-			test_geometry_.track_count,
+			test_geometry_.track_count(),
 			image.first_valid_sector_id(),
 			sector_buffer),
 		disk_error_id_type::invalid_track);
@@ -442,7 +442,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // drive track
 			0, // head id
 			0, // track id
-			test_geometry_.sector_count + image.first_valid_sector_id(),
+			test_geometry_.sector_count() + image.first_valid_sector_id(),
 			sector_buffer),
 		disk_error_id_type::invalid_sector);
 
@@ -461,7 +461,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 TEST_F(test_generic_disk_image, write_track_throws_on_write_protected_disks)
 {
 	generic_disk_image image(create_stream(buffer_stream_, test_geometry_), test_geometry_, 0, 1, true);
-	buffer_type sector_buffer(test_geometry_.sector_size);
+	buffer_type sector_buffer(test_geometry_.sector_size());
 
 	// Pass invalid disk head
 	ASSERT_EQ(

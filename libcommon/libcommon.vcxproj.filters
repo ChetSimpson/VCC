@@ -115,6 +115,12 @@
     <Filter Include="Header Files\utils\detail">
       <UniqueIdentifier>{5bf81da7-8e68-4093-a8d5-53550cc926fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\media\disk_image_creators">
+      <UniqueIdentifier>{d709bd45-c4e2-467d-a6d2-41ee33a94ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\media\disk_image_creators">
+      <UniqueIdentifier>{4c45d699-d101-4d9c-ab8a-774787fa2882}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -227,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="src\ui\utility.cpp">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\media\disk_image_creators\basic_disk_image_creator.cpp">
+      <Filter>Source Files\media\disk_image_creators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -412,6 +421,21 @@
     </ClInclude>
     <ClInclude Include="include\vcc\ui\utility.h">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_creator.h">
+      <Filter>Header Files\media</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_creators\basic_disk_image_creator.h">
+      <Filter>Header Files\media\disk_image_creators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\utils\scope_guard.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_layout.h">
+      <Filter>Header Files\media</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_creator_error_id.h">
+      <Filter>Header Files\media</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -27,8 +27,8 @@ namespace vcc::media
 		size_type first_valid_sector_id,
 		bool write_protected)
 		:
-		head_count_(geometry.head_count),
-		track_count_(geometry.track_count),
+		head_count_(geometry.head_count()),
+		track_count_(geometry.track_count()),
 		first_valid_sector_id_(first_valid_sector_id),
 		write_protected_(write_protected)
 	{

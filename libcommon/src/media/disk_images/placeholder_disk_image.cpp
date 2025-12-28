@@ -79,7 +79,7 @@ namespace vcc::media::disk_images
 			throw std::invalid_argument("Cannot retrieve the size of a sector. Specified sector id is invalid.");
 		}
 
-		return geometry_.sector_size;
+		return geometry_.sector_size();
 	}
 
 	std::optional<placeholder_disk_image::sector_record_header_type> placeholder_disk_image::query_sector_header_by_index(
@@ -106,7 +106,7 @@ namespace vcc::media::disk_images
 			disk_head,
 			disk_track,
 			disk_sector,
-			geometry_.sector_size
+			geometry_.sector_size()
 		};
 	}
 
@@ -151,7 +151,7 @@ namespace vcc::media::disk_images
 		[[maybe_unused]] size_type disk_head,
 		[[maybe_unused]] size_type disk_track) const noexcept
 	{
-		return geometry_.sector_count;
+		return geometry_.sector_count();
 	}
 
 }

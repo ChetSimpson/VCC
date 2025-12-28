@@ -50,9 +50,9 @@ namespace vcc::media::disk_images
 		stream_(*stream_ptr_.get()),
 		file_size_(::vcc::utils::get_stream_size(stream_)),
 		track_data_offset_(std::move(track_data_offset)),
-		sector_count_(geometry.sector_count),
-		track_size_(geometry.sector_count * geometry.sector_size),
-		sector_size_(geometry.sector_size)
+		sector_count_(geometry.sector_count()),
+		track_size_(geometry.sector_count() * geometry.sector_size()),
+		sector_size_(geometry.sector_size())
 	{
 		// TODO-CHET: find a way to do this without the cast. i.e. the file size is <0 if
 		// the file is closed. Also check good/bad flags.

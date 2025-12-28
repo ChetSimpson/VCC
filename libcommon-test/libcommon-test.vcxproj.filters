@@ -13,6 +13,9 @@
     <Filter Include="src\media\disk_images">
       <UniqueIdentifier>{f797b596-84b8-4706-9986-e69e965b2da6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\media\disk_image_creators">
+      <UniqueIdentifier>{d4fa6ffe-97d5-4001-968f-8adea4929d76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\media\memory_stream_buffer.h">
@@ -31,6 +34,9 @@
     </ClCompile>
     <ClCompile Include="src\media\test_disk_image.cpp">
       <Filter>src\media</Filter>
+    </ClCompile>
+    <ClCompile Include="src\media\disk_image_creators\test_basic_disk_image_creator.cpp">
+      <Filter>src\media\disk_image_creators</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

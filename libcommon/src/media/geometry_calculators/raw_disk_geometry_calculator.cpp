@@ -30,7 +30,7 @@ namespace vcc::media::geometry_calculators
 
 		// Calculate the size of each track and make sure that there are no extra bytes
 		// since a raw disk image should have no header and each track is the same size.
-		const auto track_size_in_bytes(geometry.sector_count * geometry.sector_size);
+		const auto track_size_in_bytes(geometry.sector_count() * geometry.sector_size());
 		if (file_size % track_size_in_bytes != 0)
 		{
 			return {};
@@ -52,18 +52,18 @@ namespace vcc::media::geometry_calculators
 		// accept track counts for single sided disks
 		if(total_track_count < 70 || (total_track_count & 1) != 0)
 		{
-			geometry.track_count = total_track_count;
-			geometry.head_count = 1;
+			geometry.track_count(total_track_count);
+			geometry.head_count(1);
 		}
 		else
 		{
-			geometry.track_count = total_track_count / 2;
-			geometry.head_count = 2;
+			geometry.track_count(total_track_count / 2);
+			geometry.head_count(2);
 		}
 
 		// Most older FDC's only use 8 bits to represent the track number when accessing
 		// the disk so we limit the maximum number of tracks to fit in 8 bits.
-		if (geometry.track_count > std::numeric_limits<std::uint8_t>::max())
+		if (geometry.track_count() > std::numeric_limits<std::uint8_t>::max())
 		{
 			return {};
 		}
