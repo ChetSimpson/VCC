@@ -28,7 +28,7 @@ namespace vcc::media::geometry_calculators
 	{
 		auto geometry(default_geometry());
 
-		geometry.head_count (header_buffer[header_elements::head_count]);
+		geometry.head_count(header_buffer[header_elements::head_count]);
 		// TODO-CHET: Maybe only accept head counts of 1 and 2.
 		if (geometry.head_count() == 0)
 		{
