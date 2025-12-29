@@ -184,7 +184,7 @@ namespace vcc::cartridges::fd502
 		{
 			MessageBox(
 				handle(),
-				"Unable to create disk image. DREAM can only create disk images type you selected.",
+				"Unable to create disk image. DREAM can only create disk images of the type you selected.",
 				"Format Parameter Error!",
 				MB_ICONHAND | MB_OK);
 
