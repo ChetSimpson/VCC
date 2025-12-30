@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\media\disk_images\test_generic_disk_image.cpp" />
+    <ClCompile Include="src\media\disk_image_creators\test_basic_disk_image_creator.cpp" />
     <ClCompile Include="src\media\test_disk_image.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

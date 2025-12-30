@@ -28,24 +28,24 @@ namespace vcc::media::geometry_calculators
 	{
 		auto geometry(default_geometry());
 
-		geometry.head_count = header_buffer[header_elements::head_count];
+		geometry.head_count(header_buffer[header_elements::head_count]);
 		// TODO-CHET: Maybe only accept head counts of 1 and 2.
-		if (geometry.head_count == 0)
+		if (geometry.head_count() == 0)
 		{
 			return {};
 		}
 
-		geometry.sector_count = header_buffer[header_elements::sector_count];
+		geometry.sector_count(header_buffer[header_elements::sector_count]);
 
 		const auto disk_image_size(file_size - header_size);
-		const auto track_size_in_bytes(geometry.sector_count * geometry.sector_size * geometry.head_count);
+		const auto track_size_in_bytes(geometry.sector_count() * geometry.sector_size() * geometry.head_count());
 
 		if (disk_image_size % track_size_in_bytes != 0)
 		{
 			return {};
 		}
 
-		geometry.track_count = disk_image_size / track_size_in_bytes;
+		geometry.track_count(disk_image_size / track_size_in_bytes);
 
 		return calculated_geometry_type{ header_size, geometry };
 	}

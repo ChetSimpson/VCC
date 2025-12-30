@@ -82,6 +82,7 @@
     <ClCompile Include="src\media\disk_image.cpp" />
     <ClCompile Include="src\media\disk_images\generic_disk_image.cpp" />
     <ClCompile Include="src\media\disk_images\placeholder_disk_image.cpp" />
+    <ClCompile Include="src\media\disk_image_creators\basic_disk_image_creator.cpp" />
     <ClCompile Include="src\media\geometry_calculators\floppy_disk_geometry_calculator.cpp" />
     <ClCompile Include="src\media\geometry_calculators\jvc_disk_geometry_calculator.cpp" />
     <ClCompile Include="src\media\geometry_calculators\os9_disk_geometry_calculator.cpp" />
@@ -123,11 +124,15 @@
     <ClInclude Include="include\vcc\devices\rtc\ds1315.h" />
     <ClInclude Include="include\vcc\devices\rtc\oki_m6242b.h" />
     <ClInclude Include="include\vcc\devices\serial\beckerport.h" />
+    <ClInclude Include="include\vcc\media\disk_creator_error_id.h" />
     <ClInclude Include="include\vcc\media\disk_error_id.h" />
     <ClInclude Include="include\vcc\media\disk_geometry.h" />
     <ClInclude Include="include\vcc\media\disk_image.h" />
     <ClInclude Include="include\vcc\media\disk_images\generic_disk_image.h" />
     <ClInclude Include="include\vcc\media\disk_images\placeholder_disk_image.h" />
+    <ClInclude Include="include\vcc\media\disk_image_creator.h" />
+    <ClInclude Include="include\vcc\media\disk_image_creators\basic_disk_image_creator.h" />
+    <ClInclude Include="include\vcc\media\disk_image_layout.h" />
     <ClInclude Include="include\vcc\media\exceptions.h" />
     <ClInclude Include="include\vcc\media\geometry\generic_disk_geometry.h" />
     <ClInclude Include="include\vcc\media\geometry_calculator.h" />
@@ -165,6 +170,7 @@
     <ClInclude Include="include\vcc\utils\dll_deleter.h" />
     <ClInclude Include="include\vcc\utils\filesystem.h" />
     <ClInclude Include="include\vcc\utils\logger.h" />
+    <ClInclude Include="include\vcc\utils\scope_guard.h" />
     <ClInclude Include="include\vcc\utils\streams.h" />
     <ClInclude Include="include\vcc\utils\winapi.h" />
     <ClInclude Include="resource\resource.h" />

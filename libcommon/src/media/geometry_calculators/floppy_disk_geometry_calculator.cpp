@@ -34,7 +34,7 @@ namespace vcc::media::geometry_calculators
 		const header_buffer_type& header_buffer,
 		size_type file_size) const
 	{
-		switch (file_size % default_geometry().sector_size)
+		switch (file_size % default_geometry().sector_size())
 		{
 		case raw_disk_geometry_calculator::header_size:
 			// If the image contains an OS-9 formatted disk and the geometry can be

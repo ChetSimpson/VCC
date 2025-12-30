@@ -35,9 +35,9 @@ TEST_F(test_disk_image, head_count_property)
 	for (const auto head_count : test_value_sequence_)
 	{
 		geometry_type geometry;
-		geometry.head_count = head_count;
+		geometry.head_count(head_count);
 
-		EXPECT_EQ(disk_image(geometry).head_count(), geometry.head_count);
+		EXPECT_EQ(disk_image(geometry).head_count(), geometry.head_count());
 	}
 }
 
@@ -47,9 +47,9 @@ TEST_F(test_disk_image, sector_count_property)
 	for (const auto track_count : test_value_sequence_)
 	{
 		geometry_type geometry;
-		geometry.track_count = track_count;
+		geometry.track_count(track_count);
 
-		EXPECT_EQ(disk_image(geometry).track_count(), geometry.track_count);
+		EXPECT_EQ(disk_image(geometry).track_count(), geometry.track_count());
 	}
 }
 
@@ -73,7 +73,7 @@ TEST_F(test_disk_image, is_write_protected)
 TEST_F(test_disk_image, is_valid_disk_head)
 {
 	geometry_type geometry;
-	geometry.head_count = *std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1;
+	geometry.head_count(*std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1);
 
 	for (const auto head : test_value_sequence_)
 	{
@@ -85,18 +85,18 @@ TEST_F(test_disk_image, is_valid_disk_head)
 TEST_F(test_disk_image, is_valid_disk_head_fails_on_invalid_head)
 {
 	geometry_type geometry;
-	geometry.head_count = 1;
+	geometry.head_count(1);
 
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count + 1));
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count + 2));
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count + 10));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count() + 1));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count() + 2));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.head_count() + 10));
 }
 
 // Validates the track validation
 TEST_F(test_disk_image, is_valid_disk_track)
 {
 	geometry_type geometry;
-	geometry.track_count = *std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1;
+	geometry.track_count(*std::max_element(test_value_sequence_.begin(), test_value_sequence_.end()) + 1);
 
 	for (const auto track : test_value_sequence_)
 	{
@@ -108,9 +108,9 @@ TEST_F(test_disk_image, is_valid_disk_track)
 TEST_F(test_disk_image, is_valid_disk_track_fails_on_invalid_track)
 {
 	geometry_type geometry;
-	geometry.track_count = 1;
+	geometry.track_count(1);
 
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count + 1));
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count + 2));
-	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count + 10));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count() + 1));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count() + 2));
+	EXPECT_FALSE(disk_image(geometry).is_valid_disk_head(geometry.track_count() + 10));
 }

@@ -18,6 +18,7 @@
 #include "create_disk_image_dialog.h"
 #include "resource.h"
 #include "vcc/ui/utility.h"
+#include "vcc/media/disk_image_creators/basic_disk_image_creator.h"
 #include <fstream>
 
 
@@ -142,22 +143,11 @@ namespace vcc::cartridges::fd502
 			return;
 		}
 
-		if (disk_image_layout_ != disk_image_format_type::jvc)
-		{
-			MessageBox(
-				handle(),
-				"Unable to create disk image. DREAM can only create JVC disk images.",
-				"Format Parameter Error!",
-				MB_ICONHAND | MB_OK);
-
-			return;
-		}
-
 		if (std::filesystem::exists(image_filename_))
 		{
 			const auto result = MessageBox(
 				handle(),
-				"The disk image already exists. Would you\nlike to override the existing image?",
+				"The disk image already exists. Would you\nlike to overwrite the existing image?",
 				"Disk Image Already Exists!",
 				MB_ICONQUESTION | MB_YESNO);
 
@@ -167,30 +157,91 @@ namespace vcc::cartridges::fd502
 			}
 		}
 
+		using ::vcc::media::disk_image_creators::basic_disk_image_creator;
+		using ::vcc::media::disk_image_creator;
+
 		// TODO-CHET: This only create JVC disk images and is temporary until the other
 		// disk image formats can be implemented.
-		std::basic_ofstream<uint8_t> output_file(image_filename_, std::ios_base::binary);
-		if (!output_file.is_open())
+		std::unique_ptr<disk_image_creator> image_creator;
+		switch (disk_image_layout_)
+		{
+		case disk_image_format_type::jvc:
+			image_creator = std::make_unique<basic_disk_image_creator>(
+				defaults::sector_count,
+				defaults::sector_size);
+			break;
+
+		case disk_image_format_type::vdk:
+			// TODO-CHET: Add when VDK format is supported.
+			break;
+
+		case disk_image_format_type::dmk:
+			// TODO-CHET: Add when DMK format is supported.
+			break;
+		}
+
+		if (image_creator == nullptr)
 		{
 			MessageBox(
 				handle(),
-				("Cannot open \"" + image_filename_.string() + "\"").c_str(),
+				"Unable to create disk image. DREAM can only create disk images of the type you selected.",
+				"Format Parameter Error!",
+				MB_ICONHAND | MB_OK);
+
+			return;
+		}
+
+		disk_image_creator::geometry_type geometry;
+
+		geometry.head_count(double_sided_ ? 2 : 1);
+		geometry.track_count(track_count_);
+		
+		if (const auto create_result(image_creator->create(image_filename_, geometry));
+			create_result != disk_image_creator::error_id_type::none)
+		{
+			auto error_message("Cannot create disk image \"" + image_filename_.string() + "\"\n\n");
+			switch(create_result)
+			{
+			case disk_image_creator::error_id_type::unknown:
+				error_message += "An unknown error occurred while creating the disk image.";
+				break;
+
+			case disk_image_creator::error_id_type::cannot_create_file:
+				error_message += "Unable to create file.";
+				break;
+
+			case disk_image_creator::error_id_type::cannot_validate_size:
+				error_message += "The disk image was created but size of the file cannot be validated.";
+				break;
+
+			case disk_image_creator::error_id_type::file_size_mismatch:
+				error_message += "The disk image was created but the size of the file is not what is expected.";
+				break;
+
+			case disk_image_creator::error_id_type::write_error:
+				error_message += "Unable to write to disk image file.";
+				break;
+
+			case disk_image_creator::error_id_type::cannot_resize:
+				error_message += "The disk image file was created but its size could not be set.";
+				break;
+
+			case disk_image_creator::error_id_type::cannot_seek:
+				error_message += "Unable to seek within the disk image file.";
+				break;
+			}
+
+			MessageBox(
+				handle(),
+				error_message.c_str(),
 				"Unable to create disk image!",
 				MB_ICONERROR | MB_OK);
 
 			return;
 		}
 
-		const auto heads(double_sided_ ? 2 : 1);
-		const std::vector<uint8_t> sector_data(defaults::sector_size, 0xff);
-		const auto sectors_to_write(heads * track_count_ * defaults::sector_count);
-		for (auto lsn(0u); lsn < sectors_to_write; ++lsn)
-		{
-			output_file.write(sector_data.data(), sector_data.size());
-		}
 
 		dialog_window::on_ok();
 	}
-
 
 }
