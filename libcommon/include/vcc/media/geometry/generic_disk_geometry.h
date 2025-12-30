@@ -115,6 +115,26 @@ namespace vcc::media::geometry
 			return sector_size_;
 		}
 
+		/// @brief Sets the number bytes per sector.
+		///
+		/// @param value New number of bytes per sector. Must be non-zero.
+		///
+		/// @throws std::invalid_argument if `value` is zero.
+		void sector_size(size_type value)
+		{
+			if (sector_size_ == 0)
+			{
+				throw std::invalid_argument("Unable set sector size. Sector size cannot be zero.");
+			}
+
+			if (!std::has_single_bit(sector_size_))
+			{
+				throw std::invalid_argument("Unable set sector size. Sector size must be a power of two.");
+			}
+
+			sector_size_ = value;
+		}
+
 
 	private:
 
