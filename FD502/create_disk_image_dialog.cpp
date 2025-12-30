@@ -225,6 +225,10 @@ namespace vcc::cartridges::fd502
 			case disk_image_creator::error_id_type::cannot_resize:
 				error_message += "The disk image file was created but its size could not be set.";
 				break;
+
+			case disk_image_creator::error_id_type::cannot_seek:
+				error_message += "Unable to seek within the disk image file.";
+				break;
 			}
 
 			MessageBox(
