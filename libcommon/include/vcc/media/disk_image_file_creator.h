@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "vcc/media/disk_geometry.h"
-#include "vcc/media/disk_creator_error_id.h"
+#include "vcc/types/filesystem_io_error_id.h"
 #include "vcc/detail/exports.h"
 #include <filesystem>
 #include <memory>
@@ -31,7 +31,7 @@ namespace vcc::media
 	/// Implementations of this interface are responsible for creating and initializing
 	/// disk image files according to a specified geometry. The `create` method returns
 	/// an `error_id_type` indicating success or the specific failure mode.
-	class LIBCOMMON_EXPORT disk_image_creator
+	class LIBCOMMON_EXPORT disk_image_file_creator
 	{
 	public:
 
@@ -40,13 +40,13 @@ namespace vcc::media
 		/// @brief Type representing disk geometry parameters.
 		using geometry_type = ::vcc::media::disk_geometry;
 		/// @brief Error identifier type returned by operations.
-		using error_id_type = disk_creator_error_id;
+		using error_id_type = ::vcc::types::filesystem_io_error_id;
 
 		/// @brief Virtual destructor.
 		///
 		/// Ensures derived destructors are invoked correctly through base
 		/// pointers.
-		virtual ~disk_image_creator() = default;
+		virtual ~disk_image_file_creator() = default;
 
 		/// @brief Create a disk image file at the specified path using the given geometry.
 		///

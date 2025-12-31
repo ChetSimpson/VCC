@@ -16,18 +16,18 @@
 //	VCC (Virtual Color Computer). If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "vcc/media/disk_image_creator.h"
-#include "vcc/media/disk_image_layout.h"
+#include "vcc/media/disk_image_file_creator.h"
+#include "vcc/media/disk_image_file_layout.h"
 
 
-namespace vcc::media::disk_image_creators
+namespace vcc::media::disk_image_file_creators
 {
 
 	/// @brief Basic, reusable disk image file creator implementation.
 	///
 	/// This class provides a concrete base implementation for creating simple
 	/// disk image files on disk using a specified `geometry`. It implements the
-	/// public `create` entry point from `::vcc::media::disk_image_creator`
+	/// public `create` entry point from `::vcc::media::disk_image_file_creator`
 	/// and supplies a set of protected and private virtual hooks that derived
 	/// classes can override to change header/footer layout, track sizing, and
 	/// how headers/footers are written.
@@ -36,19 +36,19 @@ namespace vcc::media::disk_image_creators
 	/// provided to the constructor are non-zero. The `create` operation returns
 	/// an `error_id_type` which indicates success (`error_id_type::none`) or a
 	/// specific failure mode.
-	class LIBCOMMON_EXPORT basic_disk_image_creator : public ::vcc::media::disk_image_creator
+	class LIBCOMMON_EXPORT basic_disk_image_file_creator : public ::vcc::media::disk_image_file_creator
 	{
 	public:
 
 		/// @brief Type used for file and region sizes (in bytes).
 		using file_size_type = std::uintmax_t;
 		/// @brief Layout description type returned by layout calculations.
-		using layout_type = ::vcc::media::disk_image_layout;
+		using layout_type = ::vcc::media::disk_image_file_layout;
 
 
 	public:
 
-		/// @brief Construct a basic disk image creator with defaults for track layout.
+		/// @brief Construct a basic disk image file creator with defaults for track layout.
 		///
 		/// @param default_sectors_per_track Default number of sectors per track used
 		///        when no more specific information is available. Must be non-zero.
@@ -56,7 +56,7 @@ namespace vcc::media::disk_image_creators
 		///        more specific information is available. Must be non-zero.
 		///
 		/// @throws std::invalid_argument if either parameter is zero.
-		basic_disk_image_creator(
+		basic_disk_image_file_creator(
 			file_size_type default_sectors_per_track,
 			file_size_type default_bytes_per_sector);
 

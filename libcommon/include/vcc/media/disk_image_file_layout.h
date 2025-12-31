@@ -27,7 +27,7 @@ namespace vcc::media
 	/// This struct records offsets and sizes (in bytes) for common regions of a
 	/// disk image such as an optional header and footer, the track data area,
 	/// and the overall image/file sizes.
-	struct disk_image_layout
+	struct disk_image_file_layout
 	{
 		/// @brief Integer type used to represent sizes (in bytes).
 		using size_type = std::uintmax_t;
