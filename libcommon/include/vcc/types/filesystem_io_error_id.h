@@ -18,17 +18,17 @@
 #pragma once
 /// @file
 ///
-/// Contains definitions for disk creator errors.
+/// Contains definitions for file system I/O errors.
 
-namespace vcc::media
+namespace vcc::types
 {
 
-	/// @brief Error identifiers returned by disk image creators.
+	/// @brief Error identifiers returned by functions that work on files.
 	///
-	/// These values describe the outcome of an attempt to create or initialize
-	/// a disk image file. They are used to indicate the specific failure mode
-	/// when creation cannot be completed successfully.
-	enum class disk_creator_error_id
+	/// These values describe the outcome of an attempt to create or modify a file. They
+	/// are used to indicate the specific failure mode when a disk I/O operation cannot
+	/// be completed successfully.
+	enum class filesystem_io_error_id
 	{
 		/// @brief No error; operation succeeded.
 		none,
@@ -36,14 +36,14 @@ namespace vcc::media
 		/// @brief An unspecified or unknown error occurred.
 		unknown,
 
-		/// @brief The creator was unable to create or open the target file.
+		/// @brief The function was unable to create or open a file.
 		///
-		/// This typically indicates filesystem permissions, path, or device errors.
+		/// This typically indicates file system permissions, path, or device errors.
 		cannot_create_file,
 
 		/// @brief The requested image size or parameters could not be validated.
 		///
-		/// Used when the creator cannot confirm that the requested layout/size is acceptable.
+		/// Used when the function cannot confirm that the requested layout/size is acceptable.
 		cannot_validate_size,
 
 		/// @brief The actual file size does not match the expected size after creation.
@@ -54,16 +54,16 @@ namespace vcc::media
 		/// @brief A write operation to the target file failed.
 		///
 		/// Used when an I/O error occurs while writing image data.
-		write_error,
+		cannot_write,
 
-		/// @brief The creator failed to resize (truncate/extend) the file as requested.
+		/// @brief The function failed to resize (truncate/extend) a file as requested.
 		///
-		/// May indicate filesystem or OS limitations when attempting to set file length.
+		/// May indicate file system or OS limitations when attempting to set file length.
 		cannot_resize,
 
-		/// @brief The creator was unable to seek to a required position in the file.
+		/// @brief The function was unable to seek to a required position in a file.
 		///
-		/// Indicates failures in repositioning the file pointer prior to read/write/resize.
+		/// Indicates failures in repositioning a file pointer prior to read/write/resize.
 		cannot_seek
 	};
 

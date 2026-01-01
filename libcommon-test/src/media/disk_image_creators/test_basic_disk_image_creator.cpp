@@ -16,7 +16,7 @@
 //	VCC (Virtual Color Computer). If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 #include "gtest/gtest.h"
-#include "vcc/media/disk_image_creators/basic_disk_image_creator.h"
+#include "vcc/media/disk_image_file_creators/basic_disk_image_file_creator.h"
 #include "vcc/media/geometry/generic_disk_geometry.h"
 
 #include <filesystem>
@@ -24,29 +24,29 @@
 #include <string>
 
 using namespace vcc::media;
-namespace creator_ns = ::vcc::media::disk_image_creators;
+namespace creator_ns = ::vcc::media::disk_image_file_creators;
 using geometry_ns = geometry::generic_disk_geometry;
 
-TEST(test_basic_disk_image_creator, constructor_zero_sectors_throws)
+TEST(test_basic_disk_image_file_creator, constructor_zero_sectors_throws)
 {
     // Zero sectors per track is not allowed.
     EXPECT_THROW(
-        creator_ns::basic_disk_image_creator(0u, 256u),
+        creator_ns::basic_disk_image_file_creator(0u, 256u),
         std::invalid_argument);
 }
 
-TEST(test_basic_disk_image_creator, constructor_zero_bytes_per_sector_throws)
+TEST(test_basic_disk_image_file_creator, constructor_zero_bytes_per_sector_throws)
 {
     // Zero bytes per sector is not allowed.
     EXPECT_THROW(
-        creator_ns::basic_disk_image_creator(18u, 0u),
+        creator_ns::basic_disk_image_file_creator(18u, 0u),
         std::invalid_argument);
 }
 
-TEST(test_basic_disk_image_creator, create_empty_path_throws)
+TEST(test_basic_disk_image_file_creator, create_empty_path_throws)
 {
     // Construct a creator with sensible defaults.
-    creator_ns::basic_disk_image_creator creator(18u, 256u);
+    creator_ns::basic_disk_image_file_creator creator(18u, 256u);
 
     // Use a generic geometry (head/track values are not used by the basic
     // creator's default track-size calculation, but a valid geometry must be passed).
@@ -57,7 +57,7 @@ TEST(test_basic_disk_image_creator, create_empty_path_throws)
     EXPECT_THROW(creator.create(empty_path, geom), std::invalid_argument);
 }
 
-TEST(test_basic_disk_image_creator, create_creates_file_with_expected_size)
+TEST(test_basic_disk_image_file_creator, create_creates_file_with_expected_size)
 {
     // Prepare geometry and creator such that the basic creator's defaults match
     // the geometry's sector layout. This makes the expected file size easy to compute.
@@ -70,7 +70,7 @@ TEST(test_basic_disk_image_creator, create_creates_file_with_expected_size)
 
     // Use the same defaults as the geometry so calculate_track_size produces
     // the expected per-track size.
-    creator_ns::basic_disk_image_creator creator(sectors_per_track, bytes_per_sector);
+    creator_ns::basic_disk_image_file_creator creator(sectors_per_track, bytes_per_sector);
 
     // Create a unique path in the temporary directory.
     const auto now = std::chrono::steady_clock::now().time_since_epoch().count();
@@ -84,7 +84,7 @@ TEST(test_basic_disk_image_creator, create_creates_file_with_expected_size)
 
     // Call create and expect success.
     const auto result = creator.create(file_path, geom);
-    EXPECT_EQ(result, creator_ns::basic_disk_image_creator::error_id_type::none);
+    EXPECT_EQ(result, creator_ns::basic_disk_image_file_creator::error_id_type::none);
 
     // Validate file exists and size is expected.
     ASSERT_TRUE(std::filesystem::exists(file_path));

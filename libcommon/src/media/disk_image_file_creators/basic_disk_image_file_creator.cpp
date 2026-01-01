@@ -15,7 +15,7 @@
 //	You should have received a copy of the GNU General Public License along with
 //	VCC (Virtual Color Computer). If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-#include "vcc/media/disk_image_creators/basic_disk_image_creator.h"
+#include "vcc/media/disk_image_file_creators/basic_disk_image_file_creator.h"
 #include "vcc/media/exceptions.h"
 #include "vcc/utils/scope_guard.h"
 #include <fstream>
@@ -24,10 +24,10 @@
 #include <system_error>
 
 
-namespace vcc::media::disk_image_creators
+namespace vcc::media::disk_image_file_creators
 {
 
-	basic_disk_image_creator::basic_disk_image_creator(
+	basic_disk_image_file_creator::basic_disk_image_file_creator(
 		file_size_type default_sectors_per_track,
 		file_size_type default_bytes_per_sector)
 		:
@@ -46,7 +46,7 @@ namespace vcc::media::disk_image_creators
 	}
 	
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::create(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::create(
 		const path_type& file_path,
 		const geometry_type& geometry)
 	{
@@ -115,7 +115,7 @@ namespace vcc::media::disk_image_creators
 	}
 
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::calculate_layout(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::calculate_layout(
 		const geometry_type& geometry,
 		layout_type& layout) const
 	{
@@ -143,23 +143,23 @@ namespace vcc::media::disk_image_creators
 		return error_id_type::none;
 	}
 
-	basic_disk_image_creator::file_size_type basic_disk_image_creator::calculate_header_size() const noexcept
+	basic_disk_image_file_creator::file_size_type basic_disk_image_file_creator::calculate_header_size() const noexcept
 	{
 		return 0;
 	}
 
-	basic_disk_image_creator::file_size_type basic_disk_image_creator::calculate_footer_size() const noexcept
+	basic_disk_image_file_creator::file_size_type basic_disk_image_file_creator::calculate_footer_size() const noexcept
 	{
 		return 0;
 	}
 
 	// Track size represent bytes per single track/side (sectors_per_track * bytes_per_sector)
-	basic_disk_image_creator::file_size_type basic_disk_image_creator::calculate_track_size(const geometry_type& /*geometry*/) const noexcept
+	basic_disk_image_file_creator::file_size_type basic_disk_image_file_creator::calculate_track_size(const geometry_type& /*geometry*/) const noexcept
 	{
 		return default_sectors_per_track_ * default_bytes_per_sector_;
 	}
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::create_file(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::create_file(
 		std::ofstream& output_stream,
 		const path_type& file_path,
 		file_size_type initial_size)
@@ -272,7 +272,7 @@ namespace vcc::media::disk_image_creators
 		return error_id_type::none;
 	}
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::write_elements(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_elements(
 		std::ostream& output_stream,
 		layout_type& layout,
 		const geometry_type& geometry)
@@ -316,7 +316,7 @@ namespace vcc::media::disk_image_creators
 			// Check stream state after header write
 			if (output_stream.fail() || output_stream.bad())
 			{
-				return error_id_type::write_error;
+				return error_id_type::cannot_write;
 			}
 		}
 
@@ -339,28 +339,28 @@ namespace vcc::media::disk_image_creators
 			// Check stream state after footer write
 			if (output_stream.fail() || output_stream.bad())
 			{
-				return error_id_type::write_error;
+				return error_id_type::cannot_write;
 			}
 		}
 
 		return error_id_type::none;
 	}
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::write_image_header(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_header(
 		std::ostream& output,
 		const geometry_type& geometry)
 	{
 		return error_id_type::none;
 	}
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::write_image_footer(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_footer(
 		std::ostream& output,
 		const geometry_type& geometry)
 	{
 		return error_id_type::none;
 	}
 
-	basic_disk_image_creator::error_id_type basic_disk_image_creator::validate_image_size(
+	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::validate_image_size(
 		const path_type& file_path,
 		layout_type& layout) const noexcept
 	{

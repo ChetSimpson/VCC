@@ -18,7 +18,7 @@
 #include "create_disk_image_dialog.h"
 #include "resource.h"
 #include "vcc/ui/utility.h"
-#include "vcc/media/disk_image_creators/basic_disk_image_creator.h"
+#include "vcc/media/disk_image_file_creators/basic_disk_image_file_creator.h"
 #include <fstream>
 
 
@@ -157,16 +157,16 @@ namespace vcc::cartridges::fd502
 			}
 		}
 
-		using ::vcc::media::disk_image_creators::basic_disk_image_creator;
-		using ::vcc::media::disk_image_creator;
+		using ::vcc::media::disk_image_file_creators::basic_disk_image_file_creator;
+		using ::vcc::media::disk_image_file_creator;
 
 		// TODO-CHET: This only create JVC disk images and is temporary until the other
 		// disk image formats can be implemented.
-		std::unique_ptr<disk_image_creator> image_creator;
+		std::unique_ptr<disk_image_file_creator> image_creator;
 		switch (disk_image_layout_)
 		{
 		case disk_image_format_type::jvc:
-			image_creator = std::make_unique<basic_disk_image_creator>(
+			image_creator = std::make_unique<basic_disk_image_file_creator>(
 				defaults::sector_count,
 				defaults::sector_size);
 			break;
@@ -191,42 +191,43 @@ namespace vcc::cartridges::fd502
 			return;
 		}
 
-		disk_image_creator::geometry_type geometry;
+		disk_image_file_creator::geometry_type geometry;
 
+		using error_id_type = disk_image_file_creator::error_id_type;
 		geometry.head_count(double_sided_ ? 2 : 1);
 		geometry.track_count(track_count_);
 		
 		if (const auto create_result(image_creator->create(image_filename_, geometry));
-			create_result != disk_image_creator::error_id_type::none)
+			create_result != error_id_type::none)
 		{
 			auto error_message("Cannot create disk image \"" + image_filename_.string() + "\"\n\n");
 			switch(create_result)
 			{
-			case disk_image_creator::error_id_type::unknown:
+			case error_id_type::unknown:
 				error_message += "An unknown error occurred while creating the disk image.";
 				break;
 
-			case disk_image_creator::error_id_type::cannot_create_file:
+			case error_id_type::cannot_create_file:
 				error_message += "Unable to create file.";
 				break;
 
-			case disk_image_creator::error_id_type::cannot_validate_size:
+			case error_id_type::cannot_validate_size:
 				error_message += "The disk image was created but size of the file cannot be validated.";
 				break;
 
-			case disk_image_creator::error_id_type::file_size_mismatch:
+			case error_id_type::file_size_mismatch:
 				error_message += "The disk image was created but the size of the file is not what is expected.";
 				break;
 
-			case disk_image_creator::error_id_type::write_error:
+			case error_id_type::cannot_write:
 				error_message += "Unable to write to disk image file.";
 				break;
 
-			case disk_image_creator::error_id_type::cannot_resize:
+			case error_id_type::cannot_resize:
 				error_message += "The disk image file was created but its size could not be set.";
 				break;
 
-			case disk_image_creator::error_id_type::cannot_seek:
+			case error_id_type::cannot_seek:
 				error_message += "Unable to seek within the disk image file.";
 				break;
 			}
