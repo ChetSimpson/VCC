@@ -85,7 +85,7 @@ namespace vcc::media::geometry
 		/// geometry. Individual tracks or specific formats may vary.
 		///
 		/// @return The sectors-per-track count.
-		size_type sector_count() const noexcept
+		[[nodiscard]] size_type sector_count() const noexcept
 		{
 			return sector_count_;
 		}
@@ -110,7 +110,7 @@ namespace vcc::media::geometry
 		/// The sector size is a power of two and is expressed in bytes.
 		///
 		/// @return Sector size in bytes.
-		size_type sector_size() const noexcept
+		[[nodiscard]] size_type sector_size() const noexcept
 		{
 			return sector_size_;
 		}

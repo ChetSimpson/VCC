@@ -54,7 +54,7 @@ TEST(test_basic_disk_image_file_creator, create_empty_path_throws)
 
     // An empty path should raise std::invalid_argument per implementation.
     std::filesystem::path empty_path;
-    EXPECT_THROW(creator.create(empty_path, geom), std::invalid_argument);
+    EXPECT_THROW((void)creator.create(empty_path, geom), std::invalid_argument);
 }
 
 TEST(test_basic_disk_image_file_creator, create_creates_file_with_expected_size)

@@ -347,15 +347,15 @@ namespace vcc::media::disk_image_file_creators
 	}
 
 	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_header(
-		std::ostream& output,
-		const geometry_type& geometry)
+		[[maybe_unused]] std::ostream& output,
+		[[maybe_unused]] const geometry_type& geometry)
 	{
 		return error_id_type::none;
 	}
 
 	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_footer(
-		std::ostream& output,
-		const geometry_type& geometry)
+		[[maybe_unused]] std::ostream& output,
+		[[maybe_unused]] const geometry_type& geometry)
 	{
 		return error_id_type::none;
 	}
