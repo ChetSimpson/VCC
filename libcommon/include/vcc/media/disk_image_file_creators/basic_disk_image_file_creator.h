@@ -71,7 +71,7 @@ namespace vcc::media::disk_image_file_creators
 		/// @param file_path Path where the image should be created.
 		/// @param geometry Geometry that describes the logical disk layout.
 		/// @return `error_id_type::none` on success or a specific error id on failure.
-		error_id_type create(
+		[[nodiscard]] error_id_type create(
 			const path_type& file_path,
 			const geometry_type& geometry) final;
 
@@ -85,22 +85,22 @@ namespace vcc::media::disk_image_file_creators
 		/// @param geometry Source geometry used to compute track/image size.
 		/// @param layout Output layout populated by this call.
 		/// @return `error_id_type::none` on success or an error id on failure.
-		virtual error_id_type calculate_layout(
+		[[nodiscard]] virtual error_id_type calculate_layout(
 			const geometry_type& geometry,
 			layout_type& layout) const;
 		/// @brief Calculate the header size in bytes (default 0).
 		///
 		/// Override to return a non-zero header size when needed.
-		virtual file_size_type calculate_header_size() const noexcept;
+		[[nodiscard]] virtual file_size_type calculate_header_size() const noexcept;
 		/// @brief Calculate the footer size in bytes (default 0).
 		///
 		/// Override to return a non-zero footer size when needed.
-		virtual file_size_type calculate_footer_size() const noexcept;
+		[[nodiscard]] virtual file_size_type calculate_footer_size() const noexcept;
 		/// @brief Calculate bytes-per-track for the given geometry.
 		///
 		/// Default implementation uses the configured defaults:
 		/// `default_sectors_per_track_ * default_bytes_per_sector_`.
-		virtual file_size_type calculate_track_size(const geometry_type& geometry) const noexcept;
+		[[nodiscard]] virtual file_size_type calculate_track_size(const geometry_type& geometry) const noexcept;
 
 
 	private:
@@ -111,7 +111,7 @@ namespace vcc::media::disk_image_file_creators
 		/// resize the file when a non-zero `initial_size` is requested. On
 		/// failure it returns an appropriate `error_id_type`. The caller handles
 		/// cleanup of partially created files via scope guards.
-		virtual error_id_type create_file(
+		[[nodiscard]] virtual error_id_type create_file(
 			std::ofstream& output,
 			const path_type& file_path,
 			file_size_type initial_size);
@@ -121,7 +121,7 @@ namespace vcc::media::disk_image_file_creators
 		/// Performs sanity checks on the provided `layout` and writes header and
 		/// footer regions by calling `write_image_header` and
 		/// `write_image_footer`. Returns an error id on failure.
-		virtual error_id_type write_elements(
+		[[nodiscard]] virtual error_id_type write_elements(
 			std::ostream& output,
 			layout_type& layout,
 			const geometry_type& geometry);
@@ -130,7 +130,7 @@ namespace vcc::media::disk_image_file_creators
 		///
 		/// Override to emit a format-specific header into `output` at the current
 		/// stream position. Return `error_id_type::none` on success.
-		virtual error_id_type write_image_header(
+		[[nodiscard]] virtual error_id_type write_image_header(
 			std::ostream& output,
 			const geometry_type& geometry);
 
@@ -138,7 +138,7 @@ namespace vcc::media::disk_image_file_creators
 		///
 		/// Override to emit a format-specific footer into `output` at the current
 		/// stream position. Return `error_id_type::none` on success.
-		virtual error_id_type write_image_footer(
+		[[nodiscard]] virtual error_id_type write_image_footer(
 			std::ostream& output,
 			const geometry_type& geometry);
 
@@ -147,9 +147,10 @@ namespace vcc::media::disk_image_file_creators
 		/// Uses the filesystem APIs to check existence, regular-file status and the
 		/// actual file size. This method is `noexcept` and returns an appropriate
 		/// `error_id_type` rather than throwing.
-		virtual error_id_type validate_image_size(
+		[[nodiscard]] virtual error_id_type validate_image_size(
 			const path_type& file_path,
 			layout_type& layout) const noexcept;
+
 
 	private:
 

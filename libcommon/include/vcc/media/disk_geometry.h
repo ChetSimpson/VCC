@@ -94,7 +94,7 @@ namespace vcc::media
 		/// @brief Retrieve the configured number of heads (sides).
 		/// 
 		/// @return The number of heads. Guaranteed to be greater than 0.
-		size_type head_count() const noexcept
+		[[nodiscard]] size_type head_count() const noexcept
 		{
 			return head_count_;
 		}
@@ -117,7 +117,7 @@ namespace vcc::media
 		/// @brief Retrieve the configured number of tracks per head.
 		/// 
 		/// @return The number of tracks. Guaranteed to be greater than 0.
-		size_type track_count() const noexcept
+		[[nodiscard]] size_type track_count() const noexcept
 		{
 			return track_count_;
 		}

@@ -19,7 +19,7 @@ namespace vcc::media::geometry_calculators
 
 		using geometry_calculator::geometry_calculator;
 
-		optional_calculated_geometry_type calculate(
+		[[nodiscard]] optional_calculated_geometry_type calculate(
 			const header_buffer_type& header_buffer,
 			size_type file_size) const override;
 
