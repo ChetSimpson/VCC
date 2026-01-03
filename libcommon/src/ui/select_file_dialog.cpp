@@ -116,7 +116,7 @@ namespace vcc::ui
 		dialog_params.lpstrInitialDir = initial_directory_.c_str();
 		dialog_params.lpstrTitle = title_.c_str();
 		dialog_params.Flags = flags_;
-		dialog_params.lpstrDefExt = default_extension_.c_str();
+		dialog_params.lpstrDefExt = default_extension_.empty() ? nullptr : default_extension_.c_str();
 
 		selected_file_.clear();
 

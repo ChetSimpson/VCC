@@ -543,25 +543,25 @@ namespace vcc::cartridges::fd502
 				registers_.sector,
 				read_transfer_buffer_));
 
-			if (result != disk_error_id_type::success)
+			if (result != disk_status_id_type::success)
 			{
 				auto status_flags(0u);
 				switch (result)
 				{
-				case disk_error_id_type::success:
+				case disk_status_id_type::success:
 					throw std::runtime_error("Cannot process success status in error handler.");
 
-				case disk_error_id_type::empty:
+				case disk_status_id_type::device_empty:
 					status_flags |= LOSTDATA;
 					break;
 
-				case disk_error_id_type::invalid_head:
-				case disk_error_id_type::invalid_track:
-				case disk_error_id_type::invalid_sector:
+				case disk_status_id_type::invalid_head:
+				case disk_status_id_type::invalid_track:
+				case disk_status_id_type::invalid_sector:
 					status_flags |= RECNOTFOUND;
 					break;
 
-				case disk_error_id_type::write_protected:
+				case disk_status_id_type::write_protected:
 					// TODO-CHET: Not sure how to handle this since there should never
 					// be an instance where this occurs. Maybe throw.
 					status_flags |= WRITEPROTECT;
@@ -739,20 +739,20 @@ namespace vcc::cartridges::fd502
 
 			switch (result)
 			{
-			case disk_error_id_type::success:
+			case disk_status_id_type::success:
 				break;
 
-			case disk_error_id_type::empty:
+			case disk_status_id_type::device_empty:
 				status_flags |= LOSTDATA;
 				break;
 
-			case disk_error_id_type::invalid_head:
-			case disk_error_id_type::invalid_track:
-			case disk_error_id_type::invalid_sector:
+			case disk_status_id_type::invalid_head:
+			case disk_status_id_type::invalid_track:
+			case disk_status_id_type::invalid_sector:
 				status_flags |= RECNOTFOUND;
 				break;
 
-			case disk_error_id_type::write_protected:
+			case disk_status_id_type::write_protected:
 				status_flags |= WRITEPROTECT;
 			}
 

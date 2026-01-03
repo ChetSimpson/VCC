@@ -132,7 +132,8 @@ namespace vcc::media::disk_image_file_creators
 		/// stream position. Return `error_id_type::none` on success.
 		[[nodiscard]] virtual error_id_type write_image_header(
 			std::ostream& output,
-			const geometry_type& geometry);
+			const geometry_type& geometry,
+			file_size_type calculated_header_size);
 
 		/// @brief Write the image footer region. Default implementation does nothing.
 		///
@@ -140,7 +141,8 @@ namespace vcc::media::disk_image_file_creators
 		/// stream position. Return `error_id_type::none` on success.
 		[[nodiscard]] virtual error_id_type write_image_footer(
 			std::ostream& output,
-			const geometry_type& geometry);
+			const geometry_type& geometry,
+			file_size_type calculated_footer_size);
 
 		/// @brief Validate that the file on disk matches the expected layout size.
 		///

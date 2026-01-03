@@ -254,7 +254,7 @@ namespace vcc::media::disk_image_file_creators
 		}
 
 		// Reopen without truncation so we can seek/write header/footer.
-		output_stream.open(file_path, std::ios::binary | std::ios::out | std::ios::app);
+		output_stream.open(file_path, std::ios::binary | std::ios::in | std::ios::out);
 		if (!output_stream.is_open())
 		{
 			return error_id_type::cannot_create_file;
@@ -307,7 +307,7 @@ namespace vcc::media::disk_image_file_creators
 				return error_id_type::cannot_seek;
 			}
 
-			if (const auto return_error = write_image_header(output_stream, geometry);
+			if (const auto return_error = write_image_header(output_stream, geometry, layout.header_size);
 				return_error != error_id_type::none)
 			{
 				return return_error;
@@ -330,7 +330,7 @@ namespace vcc::media::disk_image_file_creators
 				return error_id_type::cannot_seek;
 			}
 
-			if (const auto return_error = write_image_footer(output_stream, geometry);
+			if (const auto return_error = write_image_footer(output_stream, geometry, layout.footer_size);
 				return_error != error_id_type::none)
 			{
 				return return_error;
@@ -348,14 +348,16 @@ namespace vcc::media::disk_image_file_creators
 
 	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_header(
 		[[maybe_unused]] std::ostream& output,
-		[[maybe_unused]] const geometry_type& geometry)
+		[[maybe_unused]] const geometry_type& geometry,
+		[[maybe_unused]] file_size_type calculated_header_size)
 	{
 		return error_id_type::none;
 	}
 
 	basic_disk_image_file_creator::error_id_type basic_disk_image_file_creator::write_image_footer(
 		[[maybe_unused]] std::ostream& output,
-		[[maybe_unused]] const geometry_type& geometry)
+		[[maybe_unused]] const geometry_type& geometry,
+		[[maybe_unused]] file_size_type calculated_footer_size)
 	{
 		return error_id_type::none;
 	}

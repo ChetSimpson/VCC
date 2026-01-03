@@ -155,7 +155,7 @@ namespace vcc::media::disk_images
 		};
 	}
 
-	generic_disk_image::error_id_type generic_disk_image::read_sector(
+	generic_disk_image::status_id_type generic_disk_image::read_sector(
 		size_type disk_head,
 		size_type disk_track,
 		size_type head_id,
@@ -165,17 +165,17 @@ namespace vcc::media::disk_images
 	{
 		if (!is_valid_disk_head(disk_head) || !is_valid_disk_head(head_id))
 		{
-			return error_id_type::invalid_head;
+			return status_id_type::invalid_head;
 		}
 
 		if (!is_valid_disk_track(disk_track) || !is_valid_disk_track(track_id))
 		{
-			return error_id_type::invalid_track;
+			return status_id_type::invalid_track;
 		}
 
 		if (!is_valid_sector_record(disk_head, disk_track, head_id, track_id, sector_id))
 		{
-			return error_id_type::invalid_sector;
+			return status_id_type::invalid_sector;
 		}
 
 		if (!seek(calculate_sector_offset_unchecked(disk_head, disk_track, head_id, track_id, sector_id)))
@@ -199,10 +199,10 @@ namespace vcc::media::disk_images
 			throw fatal_io_error("Cannot read sector. Fatal IO error encountered while reading sector data.");
 		}
 
-		return error_id_type::success;
+		return status_id_type::success;
 	}
 
-	generic_disk_image::error_id_type generic_disk_image::write_sector(
+	generic_disk_image::status_id_type generic_disk_image::write_sector(
 		size_type disk_head,
 		size_type disk_track,
 		size_type head_id,
@@ -212,17 +212,17 @@ namespace vcc::media::disk_images
 	{
 		if (!is_valid_disk_head(disk_head) || !is_valid_disk_head(head_id))
 		{
-			return error_id_type::invalid_head;
+			return status_id_type::invalid_head;
 		}
 
 		if (!is_valid_disk_track(disk_track) || !is_valid_disk_track(track_id))
 		{
-			return error_id_type::invalid_track;
+			return status_id_type::invalid_track;
 		}
 
 		if (!is_valid_sector_record(disk_head, disk_track, head_id, track_id, sector_id))
 		{
-			return error_id_type::invalid_sector;
+			return status_id_type::invalid_sector;
 		}
 
 		const auto sector_size(get_sector_size(disk_head, disk_track, head_id, track_id, sector_id));
@@ -240,7 +240,7 @@ namespace vcc::media::disk_images
 
 		if (is_write_protected())
 		{
-			return error_id_type::write_protected;
+			return status_id_type::write_protected;
 		}
 
 		stream_.write(reinterpret_cast<const char*>(data_buffer.data()), sector_size);
@@ -250,7 +250,7 @@ namespace vcc::media::disk_images
 			throw fatal_io_error("Cannot write sector. Fatal IO error encountered while writing sector.");
 		}
 
-		return error_id_type::success;
+		return status_id_type::success;
 	}
 
 
@@ -303,7 +303,7 @@ namespace vcc::media::disk_images
 			}
 		}
 
-		[[maybe_unused]] auto last_result(error_id_type::success);
+		[[maybe_unused]] auto last_result(status_id_type::success);
 		for (const auto& sector : sectors)
 		{
 			// TODO-CHET: This is a placeholder. A more robust solution is needed to support other disk
@@ -315,7 +315,7 @@ namespace vcc::media::disk_images
 				sector.header.track_id,
 				sector.header.sector_id,
 				sector.data));
-			if (result != error_id_type::success)
+			if (result != status_id_type::success)
 			{
 				last_result = result;
 			}

@@ -306,7 +306,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_head);
+		status_id_type::invalid_head);
 
 	// Pass invalid disk track
 	ASSERT_EQ(
@@ -317,7 +317,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_track);
+		status_id_type::invalid_track);
 
 	// Pass invalid head id
 	ASSERT_EQ(
@@ -328,7 +328,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_head);
+		status_id_type::invalid_head);
 
 	// Pass invalid track id
 	ASSERT_EQ(
@@ -339,7 +339,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			test_geometry_.track_count(),
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_track);
+		status_id_type::invalid_track);
 
 	// Pass invalid sector id
 	ASSERT_EQ(
@@ -350,7 +350,7 @@ TEST_F(test_generic_disk_image, read_sector_throws_on_invalid_arguments)
 			0, // track id
 			test_geometry_.sector_count() + image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_sector);
+		status_id_type::invalid_sector);
 }
 
 #ifdef INCLUDE_INCOMPLETE_AND_BROKEN_LIBCOMMON_CODE
@@ -400,7 +400,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_head);
+		status_id_type::invalid_head);
 
 	// Pass invalid disk track
 	ASSERT_EQ(
@@ -411,7 +411,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_track);
+		status_id_type::invalid_track);
 
 	// Pass invalid head id
 	ASSERT_EQ(
@@ -422,7 +422,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_head);
+		status_id_type::invalid_head);
 
 	// Pass invalid track id
 	ASSERT_EQ(
@@ -433,7 +433,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			test_geometry_.track_count(),
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_track);
+		status_id_type::invalid_track);
 
 	// Pass invalid sector id
 	ASSERT_EQ(
@@ -444,7 +444,7 @@ TEST_F(test_generic_disk_image, write_track_throws_on_invalid_arguments)
 			0, // track id
 			test_geometry_.sector_count() + image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::invalid_sector);
+		status_id_type::invalid_sector);
 
 	// Pass invalid sector id
 	EXPECT_THROW(
@@ -472,5 +472,5 @@ TEST_F(test_generic_disk_image, write_track_throws_on_write_protected_disks)
 			0, // track id
 			image.first_valid_sector_id(),
 			sector_buffer),
-		disk_error_id_type::write_protected);	
+		status_id_type::write_protected);	
 }

@@ -26,8 +26,7 @@ namespace vcc::media::geometry_calculators
 		geometry_calculator(default_geometry),
 		raw_geometry_calculator_(default_geometry),
 		os9_geometry_calculator_(default_geometry),
-		jvc_geometry_calculator_(default_geometry),
-		vdk_geometry_calculator_(default_geometry)
+		jvc_geometry_calculator_(default_geometry)
 	{}
 
 	floppy_disk_geometry_calculator::optional_calculated_geometry_type floppy_disk_geometry_calculator::calculate(
@@ -54,8 +53,6 @@ namespace vcc::media::geometry_calculators
 			// variant including the sector and head counts is supported.
 			return jvc_geometry_calculator_.calculate(header_buffer, file_size);
 
-		case vdk_disk_geometry_calculator::header_size:
-			return vdk_geometry_calculator_.calculate(header_buffer, file_size);
 		}
 
 		return {};

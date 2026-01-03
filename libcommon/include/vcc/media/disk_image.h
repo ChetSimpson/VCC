@@ -19,7 +19,7 @@
 #include "vcc/media/disk_geometry.h"
 #include "vcc/media/sector_record.h"
 #include "vcc/detail/exports.h"
-#include "vcc/media/disk_error_id.h"
+#include "vcc/media/disk_status_id.h"
 #include <optional>
 #include <vector>
 
@@ -49,7 +49,7 @@ namespace vcc::media
 		/// @brief The type of a vector of sector records.
 		using sector_record_vector = std::vector<sector_record_type>;
 		/// @brief Type alias for error codes returned by various functions.
-		using error_id_type = ::vcc::media::disk_error_id;
+		using status_id_type = ::vcc::media::disk_status_id;
 
 
 	public:
@@ -236,7 +236,7 @@ namespace vcc::media
 		/// @throws std::invalid_argument if the head specified in `disk_head` does not exist.
 		/// @throws std::invalid_argument if the track specified in `disk_track` does not exist.
 		/// @throws std::invalid_argument if a sector record matching the head, track, and sector identifiers
-		[[nodiscard]] virtual error_id_type read_sector(
+		[[nodiscard]] virtual status_id_type read_sector(
 			size_type disk_head,
 			size_type disk_track,
 			size_type head_id,
@@ -269,7 +269,7 @@ namespace vcc::media
 		/// flag enabled.
 		/// @throws vcc::media::fatal_io_error If an IO error occurs while reading the sector
 		/// data.
-		[[nodiscard]] virtual error_id_type write_sector(
+		[[nodiscard]] virtual status_id_type write_sector(
 			size_type disk_head,
 			size_type disk_track,
 			size_type head_id,

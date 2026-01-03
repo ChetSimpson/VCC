@@ -407,7 +407,7 @@
     <ClInclude Include="include\vcc\utils\resource_location.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\vcc\media\disk_error_id.h">
+    <ClInclude Include="include\vcc\media\disk_status_id.h">
       <Filter>Header Files\media</Filter>
     </ClInclude>
     <ClInclude Include="include\vcc\utils\detail\location_class_id.h">
