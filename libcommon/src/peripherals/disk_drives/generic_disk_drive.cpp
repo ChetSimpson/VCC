@@ -118,7 +118,7 @@ namespace vcc::peripherals::disk_drives
 	}
 
 
-	generic_disk_drive::error_id_type generic_disk_drive::read_sector(
+	generic_disk_drive::status_id_type generic_disk_drive::read_sector(
 		size_type drive_head,
 		size_type head_id,
 		size_type track_id,
@@ -134,7 +134,7 @@ namespace vcc::peripherals::disk_drives
 			data_buffer);
 	}
 
-	generic_disk_drive::error_id_type generic_disk_drive::write_sector(
+	generic_disk_drive::status_id_type generic_disk_drive::write_sector(
 		size_type drive_head,
 		size_type head_id,
 		size_type track_id,

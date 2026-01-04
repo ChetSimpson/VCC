@@ -75,7 +75,7 @@ public:
 	}
 
 	/// @inheritdoc
-	[[nodiscard]] error_id_type read_sector(
+	[[nodiscard]] status_id_type read_sector(
 		[[maybe_unused]] size_type disk_head,
 		[[maybe_unused]] size_type disk_track,
 		[[maybe_unused]] size_type head_id,
@@ -87,7 +87,7 @@ public:
 	}
 
 	/// @inheritdoc
-	[[nodiscard]] error_id_type write_sector(
+	[[nodiscard]] status_id_type write_sector(
 		[[maybe_unused]] size_type disk_head,
 		[[maybe_unused]] size_type disk_track,
 		[[maybe_unused]] size_type head_id,

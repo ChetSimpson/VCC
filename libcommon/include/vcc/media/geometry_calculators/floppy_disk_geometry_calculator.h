@@ -3,7 +3,6 @@
 #include "vcc/media/geometry_calculators/os9_disk_geometry_calculator.h"
 #include "vcc/media/geometry_calculators/raw_disk_geometry_calculator.h"
 #include "vcc/media/geometry_calculators/jvc_disk_geometry_calculator.h"
-#include "vcc/media/geometry_calculators/vdk_disk_geometry_calculator.h"
 #include <map>
 #include <memory>
 
@@ -47,8 +46,6 @@ namespace vcc::media::geometry_calculators
 		const ::vcc::media::geometry_calculators::os9_disk_geometry_calculator os9_geometry_calculator_;
 		/// @brief The geometry calculator for JVC disk image files.
 		const ::vcc::media::geometry_calculators::jvc_disk_geometry_calculator jvc_geometry_calculator_;
-		/// @brief The geometry calculator for VDK disk image files.
-		const ::vcc::media::geometry_calculators::vdk_disk_geometry_calculator vdk_geometry_calculator_;
 	};
 
 }

@@ -18,8 +18,7 @@
 #pragma once
 /// @file
 ///
-/// Contains definitions for disk errors.
-#include <cstddef>
+/// Contains definitions for disk operation status codes.
 
 
 namespace vcc::media
@@ -27,12 +26,12 @@ namespace vcc::media
 
 	/// @brief Defines a set of status codes returned from disk drive and disk image
 	/// related functions.
-	enum class disk_error_id
+	enum class disk_status_id
 	{
 		/// @brief The function was successful.
 		success,
 		/// @brief The disk drive or image is empty.
-		empty,
+		device_empty,
 		/// @brief The specified head parameter is not valid for the operation or does
 		/// not exist.
 		invalid_head,

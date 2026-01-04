@@ -40,7 +40,7 @@ namespace vcc::media
 		/// @brief Type alias for geometry.
 		using geometry_type = calculated_geometry_type::geometry_type;
 		/// @brief Type alias for the buffer that holds the disk image header data.
-		using header_buffer_type = std::array<unsigned char, 32>;
+		using header_buffer_type = std::array<unsigned char, 128>;
 
 
 	public:

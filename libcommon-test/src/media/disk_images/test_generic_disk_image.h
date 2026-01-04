@@ -28,7 +28,7 @@ class test_generic_disk_image : public testing::Test
 protected:
 
 	using generic_disk_image = ::vcc::media::disk_images::generic_disk_image;
-	using disk_error_id_type = generic_disk_image::error_id_type;
+	using status_id_type = generic_disk_image::status_id_type;
 	using size_type = generic_disk_image::size_type;
 	using geometry_type = generic_disk_image::geometry_type;
 	using buffer_type = generic_disk_image::buffer_type;
@@ -160,7 +160,7 @@ protected:
 			data = id;
 		}
 
-		ASSERT_EQ(image.write_sector(head, track, head, track, sector, sector_buffer), disk_error_id_type::success);
+		ASSERT_EQ(image.write_sector(head, track, head, track, sector, sector_buffer), status_id_type::success);
 	};
 
 	static void validate_sector_data(
