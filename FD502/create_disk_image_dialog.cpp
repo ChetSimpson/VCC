@@ -25,23 +25,28 @@
 namespace vcc::cartridges::fd502
 {
 
-	const std::map<
-		UINT,
-		create_disk_image_dialog::disk_image_format_type> create_disk_image_dialog::disk_type_id_to_enum_map_ =
+	const std::vector<create_disk_image_dialog::disk_image_selection_detail>
+		create_disk_image_dialog::disk_selection_details_ =
 	{
-		{IDC_NEWDISK_JVC_FORMAT, disk_image_format_type::jvc},
-		{IDC_NEWDISK_VDK_FORMAT, disk_image_format_type::vdk},
-		{IDC_NEWDISK_DMK_FORMAT, disk_image_format_type::dmk}
+		{ IDC_NEWDISK_DSK_FORMAT, disk_image_format_type::dsk, ".dsk" },
+		{ IDC_NEWDISK_VDK_FORMAT, disk_image_format_type::vdk, ".vdk" },
+		{ IDC_NEWDISK_DMK_FORMAT, disk_image_format_type::dmk, ".dmk" }
 	};
 
-	const std::map<
-		create_disk_image_dialog::disk_image_format_type,
-		UINT> create_disk_image_dialog::disk_type_enum_map_to_id_ =
-	{
-		{disk_image_format_type::jvc, IDC_NEWDISK_JVC_FORMAT},
-		{disk_image_format_type::vdk, IDC_NEWDISK_VDK_FORMAT},
-		{disk_image_format_type::dmk, IDC_NEWDISK_DMK_FORMAT}
-	};
+	const create_disk_image_dialog::disk_control_id_to_details_map_type
+		create_disk_image_dialog::disk_control_id_to_details_map_(
+			disk_selection_details_.begin(),
+			disk_selection_details_.end());
+
+	const create_disk_image_dialog::image_type_id_to_details_map_type
+		create_disk_image_dialog::image_type_id_to_details_map_(
+			disk_selection_details_.begin(),
+			disk_selection_details_.end());
+
+	const create_disk_image_dialog::file_extension_to_details_map_type
+		create_disk_image_dialog::file_extension_to_details_map_(
+			disk_selection_details_.begin(),
+			disk_selection_details_.end());
 
 	const std::map<
 		UINT,
@@ -80,11 +85,42 @@ namespace vcc::cartridges::fd502
 
 		::vcc::ui::center_window_to_parent(handle());
 
-		disk_image_layout_ = defaults::image_layout;
+		disk_image_format_ = defaults::image_layout;
 		double_sided_ = defaults::double_sided;
 		track_count_ = defaults::track_count;
+		allow_extension_change_ = true;
 
-		set_button_check(disk_type_enum_map_to_id_.at(disk_image_layout_), true);
+		// If the filename has an extension we want to determine the image type associated
+		// with it and select the control that represents it. 
+		if (image_filename_.has_extension())
+		{
+			auto extension(image_filename_.extension().string());
+			std::transform(
+				extension.begin(),
+				extension.end(),
+				extension.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			if(const auto details(file_extension_to_details_map_.find(extension));
+			   details != file_extension_to_details_map_.end())
+			{
+				disk_image_format_ = details->second.format_type;
+			}
+			else
+			{
+				// An extension has been provided but it's not one known to be used with
+				// a disk image file so we prevent it from being changed in the filename
+				// if a different format is selected.
+				allow_extension_change_ = false;
+			}
+		}
+		else
+		{
+			// There is no extension so we use the one from the initial image format.
+			image_filename_.replace_extension(image_type_id_to_details_map_.at(disk_image_format_).extension);
+		}
+
+		set_button_check(image_type_id_to_details_map_.at(disk_image_format_).control_id, true);
 		set_button_check(track_count_value_to_id_.at(track_count_), true);
 		set_button_check(IDC_NEWDISK_DOUBLESIDED, double_sided_);
 		set_control_text(IDC_NEWDISK_FILENAME, image_filename_.filename());
@@ -97,19 +133,26 @@ namespace vcc::cartridges::fd502
 		WPARAM wParam,
 		[[maybe_unused]] LPARAM lParam)
 	{
-
-		switch (LOWORD(wParam))
+		switch (const auto command_id(LOWORD(wParam)); command_id)
 		{
-		case IDC_NEWDISK_DMK_FORMAT:
-		case IDC_NEWDISK_JVC_FORMAT:
+		case IDC_NEWDISK_DSK_FORMAT:
 		case IDC_NEWDISK_VDK_FORMAT:
-			disk_image_layout_ = disk_type_id_to_enum_map_.at(LOWORD(wParam));
+		case IDC_NEWDISK_DMK_FORMAT:
+			disk_image_format_ = disk_control_id_to_details_map_.at(command_id).format_type;
+			// Replace the file extension in the filename if allowed.
+			if (allow_extension_change_)
+			{
+				const auto& details = image_type_id_to_details_map_.at(disk_image_format_);
+
+				image_filename_.replace_extension(details.extension);
+				set_control_text(IDC_NEWDISK_FILENAME, image_filename_.filename());
+			}
 			break;
 
 		case IDC_NEWDISK_35TRACKS:
 		case IDC_NEWDISK_40TRACKS:
 		case IDC_NEWDISK_80TRACKS:
-			track_count_ = track_count_id_to_value_.at(LOWORD(wParam));
+			track_count_ = track_count_id_to_value_.at(command_id);
 			break;
 
 		case IDC_NEWDISK_DOUBLESIDED:
@@ -163,9 +206,9 @@ namespace vcc::cartridges::fd502
 		// TODO-CHET: This only create JVC disk images and is temporary until the other
 		// disk image formats can be implemented.
 		std::unique_ptr<disk_image_file_creator> image_creator;
-		switch (disk_image_layout_)
+		switch (disk_image_format_)
 		{
-		case disk_image_format_type::jvc:
+		case disk_image_format_type::dsk:
 			image_creator = std::make_unique<basic_disk_image_file_creator>(
 				defaults::sector_count,
 				defaults::sector_size);
@@ -191,9 +234,9 @@ namespace vcc::cartridges::fd502
 			return;
 		}
 
-		disk_image_file_creator::geometry_type geometry;
-
 		using error_id_type = disk_image_file_creator::error_id_type;
+
+		disk_image_file_creator::geometry_type geometry;
 		geometry.head_count(double_sided_ ? 2 : 1);
 		geometry.track_count(track_count_);
 		

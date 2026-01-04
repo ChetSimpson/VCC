@@ -313,17 +313,21 @@ namespace vcc::cartridges::fd502
 		::vcc::ui::select_file_dialog insert_disk_dialog;
 		insert_disk_dialog.set_title(std::format("Insert Disk Into Drive {}", drive_id))
 			.set_initial_directory(configuration_->disk_image_directory())
-			.set_selection_filter({ {"Disk Images", {"*.dsk", "*.os9"} } })
-			.set_default_extension("dsk");
+			.set_selection_filter({ {"Disk Images", {"*.dsk", "*.os9", "*.vdk"}}});
 		if (insert_disk_dialog.do_modal_load_dialog(h_own))
 		{
-			const auto& selected_path(insert_disk_dialog.selected_path());
+			auto selected_path(insert_disk_dialog.selected_path());
 			if (!std::filesystem::exists(selected_path))
 			{
-				if (create_disk_image_dialog(module_instance_, selected_path).do_modal(h_own) != IDOK)
+				create_disk_image_dialog dialog(module_instance_, selected_path);
+				if (dialog.do_modal(h_own) != IDOK)
 				{
 					return;
 				}
+
+				// The filename may have changed based on the image type selected
+				// so we grab the possible new name.
+				selected_path = dialog.image_filename();
 			}
 
 			if (!std::filesystem::exists(selected_path))

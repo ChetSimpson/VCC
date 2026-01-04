@@ -28,7 +28,7 @@ namespace vcc::cartridges::fd502::detail
 	enum class disk_image_format_id
 	{
 		/// @brief Raw format arranged by track and sector ordered sequentially.
-		jvc,
+		dsk,
 		/// @brief ?Virtual Disk?
 		vdk,
 		/// @brief Rich disk format that includes sector records and other detailed data.

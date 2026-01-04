@@ -65,7 +65,7 @@ namespace vcc::cartridges::fd502
 		using step_direction_type = ::vcc::peripherals::step_direction;
 		/// @brief Type alias for tick counters.
 		using tick_type = std::size_t;
-		/// @copydoc disk_drive_device_type::status_id_type
+		/// @brief Type alias for status codes returned by various disk I/O functions.
 		using disk_status_id_type = disk_drive_device_type::status_id_type;
 
 

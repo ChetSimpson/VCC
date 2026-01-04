@@ -18,9 +18,9 @@
 #define IDC_SETTINGS_BECKER_ENAB        1008
 #define IDC_SETTINGS_BECKER_HOST        1009
 #define IDC_SETTINGS_BECKER_PORT        1010
-#define IDC_NEWDISK_DMK_FORMAT          1020
-#define IDC_NEWDISK_JVC_FORMAT          1021
-#define IDC_NEWDISK_VDK_FORMAT          1022
+#define IDC_NEWDISK_DSK_FORMAT          1020
+#define IDC_NEWDISK_VDK_FORMAT          1021
+#define IDC_NEWDISK_DMK_FORMAT          1022
 #define IDC_NEWDISK_35TRACKS            1023
 #define IDC_NEWDISK_40TRACKS            1024
 #define IDC_NEWDISK_80TRACKS            1025
