@@ -1,4 +1,5 @@
 #include "vcc/media/geometry_calculators/floppy_disk_geometry_calculator.h"
+#include "vcc/media/disk_image_abstract_factories/vdk_disk_image_abstract_factory.h"
 #include "vcc/media/disk_images/generic_disk_image.h"
 #include "vcc/media/geometry/generic_disk_geometry.h"
 #include "vcc/utils/disk_image_loader.h"
@@ -16,14 +17,15 @@ namespace vcc::utils
 		using geometry_calculator_type = ::vcc::media::geometry_calculators::floppy_disk_geometry_calculator;
 
 		auto write_protected = false;
-		auto image_stream(std::make_unique<std::fstream>());
+		std::unique_ptr<std::iostream> image_stream(std::make_unique<std::fstream>());
+		auto image_fstream(static_cast<std::fstream*>(image_stream.get()));
 
 		// Read the header
-		image_stream->open(file_path, std::ios::binary | std::ios::in | std::ios::out);
-		if (!image_stream->is_open())
+		image_fstream->open(file_path, std::ios::binary | std::ios::in | std::ios::out);
+		if (!image_fstream->is_open())
 		{	//Can't open read/write might be read only
-			image_stream->open(file_path, std::ios::binary | std::ios::in);
-			if (!image_stream->is_open())
+			image_fstream->open(file_path, std::ios::binary | std::ios::in);
+			if (!image_fstream->is_open())
 			{
 				return {};
 			}
@@ -45,6 +47,22 @@ namespace vcc::utils
 		}
 
 		const auto first_valid_sector_id = 1u;
+
+		::vcc::media::disk_image_abstract_factory::error_id_type error_condition;
+		::vcc::media::disk_image_abstract_factories::vdk_disk_image_abstract_factory vdk_factory;
+
+		std::unique_ptr<::vcc::media::disk_image> disk_image;
+
+		disk_image = vdk_factory.create(
+			image_stream,
+			file_size,
+			header_buffer,
+			write_protected,
+			error_condition);
+		if(disk_image)
+		{
+			return disk_image;
+		}
 
 		// TODO-CHET: This should be passed as am argument
 		const geometry_calculator_type::geometry_type default_geometry;

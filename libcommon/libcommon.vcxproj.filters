@@ -118,11 +118,23 @@
     <Filter Include="Header Files\types">
       <UniqueIdentifier>{f46c1f03-4c11-4db9-833e-c700848d15b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\media\detail">
+      <UniqueIdentifier>{6d11adbd-4f2f-4399-8a3e-b456478a7e4d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\media\disk_image_file_creators">
       <UniqueIdentifier>{4c45d699-d101-4d9c-ab8a-774787fa2882}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\media\disk_image_file_creators">
       <UniqueIdentifier>{d709bd45-c4e2-467d-a6d2-41ee33a94ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{6a443715-3be0-43b1-b515-4b73880d9bc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\media\disk_image_abstract_factories">
+      <UniqueIdentifier>{418b191c-eb3a-48dc-bafc-2d64f3c93ca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\media\disk_image_abstract_factories">
+      <UniqueIdentifier>{5ef2db9e-1364-4886-a895-14045c32573f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +228,6 @@
     <ClCompile Include="src\media\geometry_calculators\jvc_disk_geometry_calculator.cpp">
       <Filter>Source Files\media\geometry_calculators</Filter>
     </ClCompile>
-    <ClCompile Include="src\media\geometry_calculators\vdk_disk_geometry_calculator.cpp">
-      <Filter>Source Files\media\geometry_calculators</Filter>
-    </ClCompile>
     <ClCompile Include="src\media\geometry_calculators\floppy_disk_geometry_calculator.cpp">
       <Filter>Source Files\media\geometry_calculators</Filter>
     </ClCompile>
@@ -239,6 +248,12 @@
     </ClCompile>
     <ClCompile Include="src\media\disk_image_file_creators\basic_disk_image_file_creator.cpp">
       <Filter>Source Files\media\disk_image_file_creators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\media\disk_image_file_creators\vdk_disk_image_file_creator.cpp">
+      <Filter>Source Files\media\disk_image_file_creators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\media\disk_image_abstract_factories\vdk_disk_image_abstract_factory.cpp">
+      <Filter>Source Files\media\disk_image_abstract_factories</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +407,6 @@
     <ClInclude Include="include\vcc\media\geometry_calculators\jvc_disk_geometry_calculator.h">
       <Filter>Header Files\media\geometry_calculators</Filter>
     </ClInclude>
-    <ClInclude Include="include\vcc\media\geometry_calculators\vdk_disk_geometry_calculator.h">
-      <Filter>Header Files\media\geometry_calculators</Filter>
-    </ClInclude>
     <ClInclude Include="include\vcc\media\geometry_calculators\floppy_disk_geometry_calculator.h">
       <Filter>Header Files\media\geometry_calculators</Filter>
     </ClInclude>
@@ -439,6 +451,21 @@
     </ClInclude>
     <ClInclude Include="include\vcc\media\disk_image_file_creators\basic_disk_image_file_creator.h">
       <Filter>Header Files\media\disk_image_file_creators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\detail\vdk_disk_image_header_layout.h">
+      <Filter>Header Files\media\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_file_creators\vdk_disk_image_file_creator.h">
+      <Filter>Header Files\media\disk_image_file_creators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_abstract_factory.h">
+      <Filter>Header Files\media</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_abstract_factories\vdk_disk_image_abstract_factory.h">
+      <Filter>Header Files\media\disk_image_abstract_factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vcc\media\disk_image_factory_error_id.h">
+      <Filter>Header Files\media</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

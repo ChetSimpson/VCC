@@ -19,6 +19,7 @@
 #include "resource.h"
 #include "vcc/ui/utility.h"
 #include "vcc/media/disk_image_file_creators/basic_disk_image_file_creator.h"
+#include "vcc/media/disk_image_file_creators/vdk_disk_image_file_creator.h"
 #include <fstream>
 
 
@@ -201,6 +202,7 @@ namespace vcc::cartridges::fd502
 		}
 
 		using ::vcc::media::disk_image_file_creators::basic_disk_image_file_creator;
+		using ::vcc::media::disk_image_file_creators::vdk_disk_image_file_creator;
 		using ::vcc::media::disk_image_file_creator;
 
 		// TODO-CHET: This only create JVC disk images and is temporary until the other
@@ -215,7 +217,9 @@ namespace vcc::cartridges::fd502
 			break;
 
 		case disk_image_format_type::vdk:
-			// TODO-CHET: Add when VDK format is supported.
+			image_creator = std::make_unique<vdk_disk_image_file_creator>(
+				defaults::sector_count,
+				defaults::sector_size);
 			break;
 
 		case disk_image_format_type::dmk:
